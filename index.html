@@ -31,7 +31,7 @@
   -->
   <script type="text/babel" data-type="module">
     // ── Destructure the hooks the component uses ──
-    const { useState, useMemo, useRef, useEffect } = React;
+    const { useState, useMemo, useRef, useEffect, useCallback } = React;
 
     // ── Fetch the JSX source, patch it, and run it ──
     fetch("EnergyTransitionAtlas.jsx")
@@ -65,8 +65,9 @@
           "useMemo",
           "useRef",
           "useEffect",
+          "useCallback",
           transformed + "\nreturn EnergyTransitionAtlas;"
-        )(React, useState, useMemo, useRef, useEffect);
+        )(React, useState, useMemo, useRef, useEffect, useCallback);
 
         // Mount it
         const root = ReactDOM.createRoot(document.getElementById("root"));
