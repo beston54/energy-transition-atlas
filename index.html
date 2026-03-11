@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Energy Transition Atlas</title>
+
+  <!-- Tailwind CSS (CDN play/script version) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 18 -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel standalone – enables <script type="text/babel"> -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* guarantee full-viewport rendering */
+    html, body, #root { margin: 0; padding: 0; min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!--
+    Shim: Babel standalone runs in global scope, so ES-module
+    import/export syntax must be replaced.  We expose the React
+    hooks the component expects, load the JSX source via fetch,
+    strip the import/export lines, and eval through Babel.
+  -->
+  <script type="text/babel" data-type="module">
+    // ── Destructure the hooks the component uses ──
+    const { useState, useMemo, useRef, useEffect } = React;
+
+    // ── Fetch the JSX source, patch it, and run it ──
+    fetch("EnergyTransitionAtlas.jsx")
+      .then(r => {
+        if (!r.ok) throw new Error("Failed to load JSX: " + r.status);
+        return r.text();
+      })
+      .then(source => {
+        // Remove the ES-module import line
+        source = source.replace(
+          /^import\s*\{[^}]*\}\s*from\s*["']react["'];?\s*$/m,
+          "// (import removed – hooks provided by shim)"
+        );
+        // Replace "export default function X()" with "function X()"
+        source = source.replace(
+          /^export\s+default\s+function\s+/m,
+          "function "
+        );
+
+        // Transform JSX → JS via Babel
+        const transformed = Babel.transform(source, {
+          presets: ["react"],
+          filename: "EnergyTransitionAtlas.jsx",
+        }).code;
+
+        // Evaluate the transformed code to define the component
+        // in this closure (it can see useState, etc.)
+        const Component = new Function(
+          "React",
+          "useState",
+          "useMemo",
+          "useRef",
+          "useEffect",
+          transformed + "\nreturn EnergyTransitionAtlas;"
+        )(React, useState, useMemo, useRef, useEffect);
+
+        // Mount it
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(React.createElement(Component));
+      })
+      .catch(err => {
+        document.getElementById("root").innerHTML =
+          '<pre style="color:red;padding:2rem;">' + err + "</pre>";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>

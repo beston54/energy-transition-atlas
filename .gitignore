@@ -1,0 +1,10 @@
+# Dev tooling
+.claude/
+
+# Briefs and docs (not needed for the deployed prototype)
+*.docx
+*.pdf
+*.md
+
+# Other prototype files
+ETA_Atlas_Prototype.jsx
