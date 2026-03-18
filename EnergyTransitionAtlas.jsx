@@ -263,6 +263,98 @@ function GreyscaleRGILogo() {
   );
 }
 
+function SubmissionCriteriaModal({ onClose }) {
+  const criteria = [
+    {
+      title: "Publicly documented",
+      desc: "The practice must be accessible via a public URL — a webpage, case study, report, or guidance document that others can view and reference.",
+    },
+    {
+      title: "Relevance to energy infrastructure",
+      desc: "The practice must relate to electricity grids, solar, onshore wind, offshore wind, or broader energy systems.",
+    },
+    {
+      title: "Nature- or People-positive focus",
+      desc: "The practice must demonstrably address biodiversity, landscape integration, community engagement, social acceptance, or other environmental and social dimensions of the energy transition.",
+    },
+    {
+      title: "Replicability",
+      desc: "The approach should be transferable — applicable to other projects, organisations, or geographies beyond the original context.",
+    },
+    {
+      title: "Demonstrated outcomes",
+      desc: "Preference is given to practices with measurable, documented, or independently verified results, though emerging and innovative approaches are also considered.",
+    },
+    {
+      title: "Recency",
+      desc: "Practices should generally date from 2000 onwards and reflect current standards and regulatory contexts.",
+    },
+    {
+      title: "Joint approval by RGI and GINGR",
+      desc: "All submissions are reviewed by the Renewables Grid Initiative (RGI) and the Global Initiative for Nature, Grids and Renewables (GINGR). Both organisations must approve a practice before it is published in the Atlas. Submissions that do not meet the criteria may be declined or returned for revision.",
+      highlight: true,
+    },
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-[#FFF8E5] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        {/* Header */}
+        <div className="flex items-start justify-between p-8 pb-4">
+          <h2 className="font-['League_Gothic'] text-[#58044D] text-3xl lg:text-4xl uppercase tracking-wide">Submission Criteria</h2>
+          <button
+            onClick={onClose}
+            className="ml-4 mt-1 text-[#424244] hover:text-[#58044D] transition-colors text-2xl leading-none"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        {/* Body */}
+        <div className="px-8 pb-8">
+          <p className="text-[#424244] text-sm leading-relaxed mb-6">
+            The Energy Transition Atlas is a curated resource. To maintain quality and relevance, all practices are reviewed jointly by <strong>RGI</strong> and <strong>GINGR</strong> before publication. Submissions should meet the following criteria:
+          </p>
+          <ol className="space-y-4">
+            {criteria.map((item, i) => (
+              <li key={i} className={`flex gap-4 p-4 rounded-xl ${item.highlight ? "bg-[#58044D]/8 border border-[#58044D]/20" : "bg-white border border-[#C9C9C9]/60"}`}>
+                <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${item.highlight ? "bg-[#58044D] text-white" : "bg-[#C9C9C9]/40 text-[#424244]"}`}>
+                  {i + 1}
+                </span>
+                <div>
+                  <p className={`text-sm font-semibold mb-0.5 ${item.highlight ? "text-[#58044D]" : "text-[#424244]"}`}>{item.title}</p>
+                  <p className="text-sm text-[#424244] opacity-80 leading-relaxed">{item.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={onClose}
+              className="px-6 py-2.5 rounded-full bg-[#58044D] text-white text-sm font-medium hover:bg-[#58044D]/90 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GreyscaleGINGRLogo() {
+  return (
+    <img
+      src="gingr-logo-grey.svg"
+      alt="GINGR – Global Initiative for Nature, Grids and Renewables"
+      className="h-[70px] w-auto opacity-80"
+    />
+  );
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
    SORT DROPDOWN COMPONENT
    ══════════════════════════════════════════════════════════════════════════════ */
@@ -437,6 +529,7 @@ export default function EnergyTransitionAtlas() {
   /* ── Form states ── */
   const [submitForm, setSubmitForm] = useState({ title:"", url:"", brand:"", dim:"", topic:"", inf:"", year:"", country:"", org:"", desc:"", img:"" });
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [showCriteriaModal, setShowCriteriaModal] = useState(false);
   const [contactForm, setContactForm] = useState({ name:"", email:"", message:"" });
   const [contactSuccess, setContactSuccess] = useState(false);
 
@@ -724,7 +817,19 @@ export default function EnergyTransitionAtlas() {
       {currentPage === "#submit" && (
         <section className="flex-1 bg-[#FFF8E5] px-6 py-12">
           <div className="max-w-2xl mx-auto">
-            <h2 className="font-['League_Gothic'] text-[#58044D] text-4xl lg:text-5xl uppercase tracking-wide mb-8">Submit a Practice</h2>
+            <h2 className="font-['League_Gothic'] text-[#58044D] text-4xl lg:text-5xl uppercase tracking-wide mb-4">Submit a Practice</h2>
+            <div className="mb-6">
+              <button
+                onClick={() => setShowCriteriaModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#58044D] text-[#58044D] text-sm font-medium hover:bg-[#58044D] hover:text-white transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Submission Criteria
+              </button>
+            </div>
+            {showCriteriaModal && <SubmissionCriteriaModal onClose={() => setShowCriteriaModal(false)} />}
             {submitSuccess ? (
               <div className="bg-white rounded-xl p-8 text-center border border-[#C9C9C9]">
                 <p className="text-[#58044D] font-bold text-xl mb-2">Thank you for your submission!</p>
@@ -1198,11 +1303,16 @@ export default function EnergyTransitionAtlas() {
       <footer className="bg-[#424244] px-6 py-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {/* Col 1: Logo + tagline */}
+            {/* Col 1: Logos + tagline */}
             <div>
-              <GreyscaleRGILogo />
-              <p className="mt-4 text-[#C9C9C9] text-sm leading-relaxed">
-                The Energy Transition Atlas is a project by the Renewables Grid Initiative which aims to break down silos between organisations, sectors, and borders by making successful approaches to a Nature- and People-Positive energy transition discoverable and shareable.
+              <div className="flex flex-wrap items-center gap-5">
+                <GreyscaleRGILogo />
+                <div className="border-l border-[#C9C9C9]/40 pl-5">
+                  <GreyscaleGINGRLogo />
+                </div>
+              </div>
+              <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed">
+                The Energy Transition Atlas is a joint project by the Renewables Grid Initiative (RGI) and the Global Initiative for Nature, Grids and Renewables (GINGR), aiming to break down silos between organisations, sectors, and borders by making successful approaches to a Nature- and People-Positive energy transition discoverable and shareable.
               </p>
             </div>
             {/* Col 2: Contact */}
