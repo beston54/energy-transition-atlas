@@ -224,7 +224,7 @@ const IconAward = () => (
    ══════════════════════════════════════════════════════════════════════════════ */
 function GreyscaleRGILogo() {
   return (
-    <svg className="w-[200px] h-auto opacity-80" viewBox="0 0 15905.4 4798.3" xmlns="http://www.w3.org/2000/svg">
+    <svg className="w-[130px] h-auto opacity-80" viewBox="0 0 15905.4 4798.3" xmlns="http://www.w3.org/2000/svg">
       <g>
         <g>
           <path fill="#C9C9C9" d="M1114.1,2310.9l-316.3-696.4H335.1v696.4H125V637.2h656.3c195.9,0,332.8,54.2,424.9,148.7c80.3,85,132.2,193.6,132.2,339.9s-47.2,245.5-127.5,330.5c-49.6,52-120.4,92.2-200.6,118l335.2,736.6H1114.1z M781.2,830.8H335.1v587.8h446.2c198.3,0,339.9-80.3,339.9-292.7S979.5,830.8,781.2,830.8z"/>
@@ -350,7 +350,7 @@ function GreyscaleGINGRLogo() {
     <img
       src="gingr-logo-grey.svg"
       alt="GINGR – Global Initiative for Nature, Grids and Renewables"
-      className="h-[70px] w-auto opacity-80"
+      className="h-[44px] w-auto opacity-80"
     />
   );
 }
@@ -1305,9 +1305,9 @@ export default function EnergyTransitionAtlas() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Col 1: Logos + tagline */}
             <div>
-              <div className="flex flex-wrap items-center gap-5">
+              <div className="flex flex-nowrap items-center gap-4">
                 <GreyscaleRGILogo />
-                <div className="border-l border-[#C9C9C9]/40 pl-5">
+                <div className="border-l border-[#C9C9C9]/40 pl-4 self-stretch flex items-center">
                   <GreyscaleGINGRLogo />
                 </div>
               </div>
