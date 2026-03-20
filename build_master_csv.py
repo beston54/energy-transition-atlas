@@ -264,10 +264,17 @@ def scrape_practice(url, session):
                     theme = val
                     break
 
-    # ── Featured image from og:image ──
-    og_img = soup.find("meta", property="og:image")
-    if og_img and og_img.get("content"):
-        img = og_img["content"]
+    # ── Featured image: prefer gallery slider photos (actual practice images) ──
+    gallery_pic = soup.find("picture", class_="gallery-slider__picture")
+    if gallery_pic:
+        gallery_img = gallery_pic.find("img")
+        if gallery_img and gallery_img.get("src"):
+            img = gallery_img["src"]
+    # Fallback to og:image only if no gallery image found
+    if not img:
+        og_img = soup.find("meta", property="og:image")
+        if og_img and og_img.get("content"):
+            img = og_img["content"]
 
     # ── Description from og:description or first content paragraph ──
     og_desc = soup.find("meta", property="og:description")
