@@ -38,6 +38,81 @@ COLUMNS = [
     "country", "org", "desc", "img", "award",
 ]
 
+# ── Topic normalization (standardize to title case with ampersands) ──
+TOPIC_NORMALIZATION = {
+    "public acceptance and engagement": "Public Acceptance & Engagement",
+    "public acceptance & engagement": "Public Acceptance & Engagement",
+    "creating awareness and capacity building": "Creating Awareness & Capacity Building",
+    "creating awareness & capacity-building": "Creating Awareness & Capacity Building",
+    "creating awareness & capacity building": "Creating Awareness & Capacity Building",
+    "climate adaptation and resilience": "Climate Adaptation & Resilience",
+    "climate adaptation & resilience": "Climate Adaptation & Resilience",
+    "integrated vegetation management": "Integrated Vegetation Management",
+    "circularity and supply chains": "Circularity & Supply Chains",
+    "circularity & supply chains": "Circularity & Supply Chains",
+    "offshore energy and nature": "Offshore Energy & Nature",
+    "offshore energy & nature": "Offshore Energy & Nature",
+    "spatial optimisation": "Spatial Optimisation",
+    "energy system planning": "Energy System Planning",
+    "energy system optimisation": "Energy System Optimisation",
+    "energy system planning & optimisation": "Energy System Planning & Optimisation",
+    "bird protection": "Bird Protection",
+    "monitoring & reporting": "Monitoring & Reporting",
+    "nature conservation & restoration": "Nature Conservation & Restoration",
+    "advocating for optimised grids": "Advocating for Optimised Grids",
+    "implementing rgi declarations": "Implementing RGI Declarations",
+    "fair & inclusive energy transition": "Fair & Inclusive Energy Transition",
+}
+
+
+def normalize_topic(topic_str):
+    """Normalize topic string to consistent formatting."""
+    if not topic_str:
+        return ""
+    # Handle multi-topic (comma-separated)
+    parts = [t.strip() for t in topic_str.split(",") if t.strip()]
+    normalized = []
+    for part in parts:
+        key = part.lower().strip()
+        norm = TOPIC_NORMALIZATION.get(key, part)  # fallback to original if not in map
+        if norm not in normalized:
+            normalized.append(norm)
+    return ", ".join(normalized)
+
+
+def normalize_title_for_dedup(title):
+    """Normalize a title for duplicate detection.
+
+    Strips punctuation variants (en-dash, em-dash, hyphens, colons),
+    collapses whitespace, lowercases.
+    """
+    t = title.lower()
+    # Replace all dash/hyphen variants with space
+    t = re.sub(r'[\u2010-\u2015\u2212\-–—‑]', ' ', t)
+    # Remove colons, quotes, parentheses
+    t = re.sub(r'[:"\'()\u201c\u201d\u2018\u2019\u00ab\u00bb]', '', t)
+    # Collapse whitespace
+    t = re.sub(r'\s+', ' ', t).strip()
+    return t
+
+
+def practice_quality_score(p):
+    """Score a practice's data completeness for dedup preference."""
+    score = 0
+    if "detail=" not in p.get("url", ""):
+        score += 10  # strongly prefer new-style URLs
+    if p.get("desc"):
+        score += 5
+    if p.get("img"):
+        score += 3
+    if p.get("topic"):
+        score += 2
+    if p.get("country"):
+        score += 1
+    if p.get("year"):
+        score += 1
+    return score
+
 
 def map_theme(raw_dim):
     """Map old dimension names to new theme names, handling semicolons."""
@@ -498,6 +573,45 @@ def main():
                 time.sleep(0.3)
 
     all_practices = list(by_title.values())
+
+    # ── Step 3b: Deduplicate by normalized title ──
+    print(f"\n  Deduplicating {len(all_practices)} practices...")
+    dedup_groups = {}
+    for p in all_practices:
+        key = normalize_title_for_dedup(p["title"])
+        dedup_groups.setdefault(key, []).append(p)
+
+    deduped = []
+    removed_count = 0
+    for key, group in dedup_groups.items():
+        if len(group) == 1:
+            deduped.append(group[0])
+        else:
+            # Pick the one with best data quality
+            group.sort(key=practice_quality_score, reverse=True)
+            best = group[0]
+            # Merge any missing fields from duplicates into best
+            for other in group[1:]:
+                for field in ["desc", "img", "topic", "theme", "country", "year", "org"]:
+                    if not best.get(field) and other.get(field):
+                        best[field] = other[field]
+            deduped.append(best)
+            removed_count += len(group) - 1
+            for removed in group[1:]:
+                print(f"    Removed duplicate: {removed['title'][:60]}")
+    all_practices = deduped
+    print(f"    Removed {removed_count} duplicates, {len(all_practices)} practices remain")
+
+    # ── Step 3c: Normalize topics ──
+    for p in all_practices:
+        p["topic"] = normalize_topic(p.get("topic", ""))
+
+    # Log remaining old-URL practices (unique, no new-URL twin)
+    old_url_remaining = [p for p in all_practices if "detail=" in p.get("url", "")]
+    if old_url_remaining:
+        print(f"\n  Note: {len(old_url_remaining)} practices still have old-style URLs (unique, no new twin):")
+        for p in old_url_remaining:
+            print(f"    {p['title'][:60]}")
 
     # Sort: year desc, then title asc
     def sort_key(p):
