@@ -95,9 +95,14 @@ def score_image_url(url):
     # Prefer gallery-slider images (curated practice photos)
     if 'gallery-slider' in url_lower:
         score += 5
-    # Prefer landscape thumbnails (practice cards)
-    if '322x196' in url_lower or '644x398' in url_lower:
-        score += 5
+    # Prefer higher-res 644x398 landscape images for cards
+    if '644x398' in url_lower:
+        score += 8
+    elif '322x196' in url_lower:
+        score += 0  # acceptable but low-res
+    # Penalize tiny icons (32x32, etc.) — scraping artifacts
+    if re.search(r'-\d{1,2}x\d{1,2}[^0-9]', url_lower):
+        score -= 50
     # Penalize portrait/infographic dimensions
     if '854x1024' in url_lower or '1024x1024' in url_lower:
         score -= 10
@@ -113,6 +118,48 @@ def score_image_url(url):
             score -= 15
             break
     return score
+
+
+def upgrade_image_resolution(url, session):
+    """Try to upgrade a thumbnail URL to a higher-resolution version.
+
+    Strategy:
+    - 322x196-c-default → 644x398-c-default (2x sharper, validated via HEAD)
+    - 440x527 → full-res (remove size suffix)
+    - 32x32 and other tiny icons → empty (discard)
+    - Already 644x398 or larger → keep as-is
+    """
+    if not url:
+        return url
+
+    # Discard tiny icon images
+    if re.search(r'-\d{1,2}x\d{1,2}-', url):
+        return ""
+
+    # Upgrade 322x196 thumbnails to 644x398
+    if '-322x196-c-default' in url:
+        upgraded = url.replace('-322x196-c-default', '-644x398-c-default')
+        try:
+            resp = session.head(upgraded, timeout=10, allow_redirects=True)
+            if resp.status_code == 200:
+                return upgraded
+        except Exception:
+            pass
+        return url  # fallback to original if 644 doesn't exist
+
+    # Upgrade 440x527 portrait crops to full-res
+    if '-440x527' in url:
+        # Remove the size suffix: filename-440x527.jpg → filename.jpg
+        upgraded = re.sub(r'-440x527', '', url)
+        try:
+            resp = session.head(upgraded, timeout=10, allow_redirects=True)
+            if resp.status_code == 200:
+                return upgraded
+        except Exception:
+            pass
+        return url
+
+    return url
 
 
 def read_excel_sheet(wb, sheet_name):
@@ -295,7 +342,8 @@ def scrape_practice(url, session):
                 and "renewables-grid.eu" in src
                 and not src.endswith(".svg")
                 and "icon" not in src.lower()
-                and "logo" not in src.lower()):
+                and "logo" not in src.lower()
+                and not re.search(r'-\d{1,2}x\d{1,2}[^0-9]', src)):  # skip tiny icons
             img_candidates.append(src)
 
     # Source 3: og:image fallback (often branded graphics, but better than nothing)
@@ -465,7 +513,21 @@ def main():
     for i, p in enumerate(all_practices, 1):
         p["id"] = i
 
-    # ── Step 4: Write CSV ──
+    # ── Step 4: Upgrade image resolution (322x196 → 644x398) ──
+    print(f"\n  Upgrading image resolution...")
+    upgraded_count = 0
+    discarded_count = 0
+    for p in all_practices:
+        original = p["img"]
+        p["img"] = upgrade_image_resolution(original, session)
+        if p["img"] != original:
+            if p["img"]:
+                upgraded_count += 1
+            else:
+                discarded_count += 1
+    print(f"    Upgraded: {upgraded_count}, Discarded tiny icons: {discarded_count}")
+
+    # ── Step 5: Write CSV ──
     print(f"\nWriting {len(all_practices)} practices to {OUTPUT_PATH}...")
     with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=COLUMNS, extrasaction="ignore")
