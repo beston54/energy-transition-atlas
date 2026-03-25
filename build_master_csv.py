@@ -32,13 +32,10 @@ THEME_MAP = {
     "Grids & Energy Systems": "Technology",
 }
 
-# ── CSV columns ──
+# ── CSV columns (only what the frontend needs) ──
 COLUMNS = [
     "id", "title", "url", "brand", "theme", "topic", "inf", "year",
-    "country", "org", "desc", "highlights", "about",
-    "img", "img2", "img3",
-    "button_url", "button_url2", "button_url3",
-    "video", "award", "source",
+    "country", "org", "desc", "img", "award",
 ]
 
 
@@ -84,6 +81,40 @@ def normalize_url(url):
     return url
 
 
+def score_image_url(url):
+    """Score an image URL to prefer real photos over branded graphics."""
+    if not url:
+        return -100
+    url_lower = url.lower()
+    score = 0
+    # Prefer JPG (real photos) over PNG (often graphics/infographics)
+    if url_lower.endswith(('.jpg', '.jpeg')) or '.jpg' in url_lower or '.jpeg' in url_lower:
+        score += 10
+    elif url_lower.endswith('.png') or '.png' in url_lower:
+        score -= 5
+    # Prefer gallery-slider images (curated practice photos)
+    if 'gallery-slider' in url_lower:
+        score += 5
+    # Prefer landscape thumbnails (practice cards)
+    if '322x196' in url_lower or '644x398' in url_lower:
+        score += 5
+    # Penalize portrait/infographic dimensions
+    if '854x1024' in url_lower or '1024x1024' in url_lower:
+        score -= 10
+    # Penalize old domain (may be broken)
+    if 'old.renewables-grid.eu' in url_lower:
+        score -= 20
+    # Penalize generic scaled placeholders
+    if '-scaled' in url_lower:
+        score -= 10
+    # Penalize generic theme placeholder images
+    for keyword in ['nature_gingr', 'technology_gingr', 'people_gingr', 'planning_gingr']:
+        if keyword in url_lower:
+            score -= 15
+            break
+    return score
+
+
 def read_excel_sheet(wb, sheet_name):
     """Read practices from an Excel sheet."""
     ws = wb[sheet_name]
@@ -99,18 +130,10 @@ def read_excel_sheet(wb, sheet_name):
         raw_dim = clean_text(row[3])
         raw_topic = clean_text(row[4])
         # row[5] = Tags, row[6] = Webinar/Video
-        video = clean_url(row[6])
         year_val = row[8]
         org = clean_text(row[9])
         desc = clean_text(row[10])
-        highlights = clean_text(row[11])
-        about = clean_text(row[12])
-        button_url = clean_url(row[13])
-        button_url2 = clean_url(row[14])
-        button_url3 = clean_url(row[15])
         img = clean_url(row[16])
-        img2 = clean_url(row[17])
-        img3 = clean_url(row[18])
         # row[19] = Comments
         award_raw = clean_text(row[20])
 
@@ -144,15 +167,7 @@ def read_excel_sheet(wb, sheet_name):
             "country": "",  # Not in Excel — will try to extract from website
             "org": org,
             "desc": desc,
-            "highlights": highlights,
-            "about": about,
             "img": img,
-            "img2": img2,
-            "img3": img3,
-            "button_url": button_url,
-            "button_url2": button_url2,
-            "button_url3": button_url3,
-            "video": video,
             "award": award,
         })
     return practices
@@ -264,17 +279,33 @@ def scrape_practice(url, session):
                     theme = val
                     break
 
-    # ── Featured image: prefer gallery slider photos (actual practice images) ──
-    gallery_pic = soup.find("picture", class_="gallery-slider__picture")
-    if gallery_pic:
+    # ── Featured image: collect candidates and pick best by score ──
+    img_candidates = []
+
+    # Source 1: ALL gallery slider photos (best source — curated practice images)
+    for gallery_pic in soup.find_all("picture", class_="gallery-slider__picture"):
         gallery_img = gallery_pic.find("img")
         if gallery_img and gallery_img.get("src"):
-            img = gallery_img["src"]
-    # Fallback to og:image only if no gallery image found
-    if not img:
-        og_img = soup.find("meta", property="og:image")
-        if og_img and og_img.get("content"):
-            img = og_img["content"]
+            img_candidates.append(gallery_img["src"])
+
+    # Source 2: Content body images (real photos embedded in the article)
+    for content_img in soup.select(".single-pages-content img, .entry-content img, article img"):
+        src = content_img.get("src", "")
+        if (src
+                and "renewables-grid.eu" in src
+                and not src.endswith(".svg")
+                and "icon" not in src.lower()
+                and "logo" not in src.lower()):
+            img_candidates.append(src)
+
+    # Source 3: og:image fallback (often branded graphics, but better than nothing)
+    og_img = soup.find("meta", property="og:image")
+    if og_img and og_img.get("content"):
+        img_candidates.append(og_img["content"])
+
+    # Pick the highest-scored candidate
+    if img_candidates:
+        img = max(img_candidates, key=score_image_url)
 
     # ── Description from og:description or first content paragraph ──
     og_desc = soup.find("meta", property="og:description")
@@ -306,15 +337,7 @@ def scrape_practice(url, session):
         "country": country,
         "org": org,
         "desc": desc,
-        "highlights": "",
-        "about": "",
         "img": img,
-        "img2": "",
-        "img3": "",
-        "button_url": "",
-        "button_url2": "",
-        "button_url3": "",
-        "video": "",
         "award": "false",
     }
 
@@ -378,7 +401,11 @@ def main():
                 existing["year"] = result["year"]
             if not existing["org"] and result["org"]:
                 existing["org"] = result["org"]
-            if not existing["img"] and result["img"]:
+            if result["img"] and (
+                not existing["img"]
+                or "old.renewables-grid.eu" in existing["img"]
+                or score_image_url(result["img"]) > score_image_url(existing["img"])
+            ):
                 existing["img"] = result["img"]
             if not existing["topic"] and result["topic"]:
                 existing["topic"] = result["topic"]
@@ -398,6 +425,29 @@ def main():
 
     print(f"  New practices from scrape: {new_count}")
     print(f"  Existing practices enriched with country: {enriched_count}")
+
+    # ── Step 3: Second pass — re-scrape practices with missing or bad images ──
+    all_practices_temp = list(by_title.values())
+    needs_image = [
+        p for p in all_practices_temp
+        if not p["img"] or "old.renewables-grid.eu" in p.get("img", "")
+    ]
+    if needs_image:
+        print(f"\n  Second pass: re-scraping {len(needs_image)} practices with missing/bad images...")
+        for i, p in enumerate(needs_image):
+            url = p.get("url", "")
+            if not url or "detail=" in url:
+                continue
+            slug = url.rstrip("/").split("/")[-1]
+            print(f"    Re-scraping [{i+1}/{len(needs_image)}]: {slug}")
+            result = scrape_practice(url, session)
+            if result and result["img"]:
+                if (not p["img"]
+                        or score_image_url(result["img"]) > score_image_url(p["img"])):
+                    p["img"] = result["img"]
+                    print(f"      -> Found image!")
+            if i < len(needs_image) - 1:
+                time.sleep(0.3)
 
     all_practices = list(by_title.values())
 
