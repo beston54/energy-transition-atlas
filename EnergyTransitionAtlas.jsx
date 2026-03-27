@@ -663,6 +663,12 @@ function PracticeDetailModal({ practice, onClose, themeClasses: getThemeClasses 
   const modalRef = useRef(null);
 
   useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, []);
+
+  useEffect(() => {
     const previouslyFocused = document.activeElement;
     modalRef.current?.focus();
 
@@ -719,12 +725,18 @@ function PracticeDetailModal({ practice, onClose, themeClasses: getThemeClasses 
             {p.org && <div className="flex items-center gap-1.5"><IconBuilding /><span>{p.org}</span></div>}
             {p.inf && <div className="flex items-center gap-1.5"><IconLayers /><span>{p.inf}</span></div>}
           </div>
-          {p.award && <div className="flex items-center gap-1.5 text-[#58044D] text-sm font-medium mb-4"><IconAward /><span>Grid Award Winner</span></div>}
+          {p.award && <div className="flex items-center gap-1.5 text-[#58044D] text-sm font-medium mb-4"><IconAward /><span>RGI Grid Awards — Good Practice of the Year{p.year ? ` (${p.year})` : ""}</span></div>}
           {/* Description */}
           {p.desc ? (
-            <p className="text-sm text-[#424244] leading-relaxed mb-6">{p.desc}</p>
+            <p className="text-sm text-[#424244] leading-relaxed mb-4">{p.desc}</p>
           ) : (
-            <p className="text-sm text-[#767676] italic mb-6">No description available.</p>
+            <p className="text-sm text-[#767676] italic mb-4">No description available.</p>
+          )}
+          {/* Atlas Partner */}
+          {p.brand && (
+            <p className="text-xs text-[#6B6B6D] mb-6">
+              Atlas Partner: <a href={BRAND_LINKS[p.brand]} target="_blank" rel="noopener noreferrer" className="text-[#58044D] font-medium hover:underline">{{ RGI: "Renewables Grid Initiative (RGI)", OCEaN: "Offshore Coalition for Energy and Nature (OCEaN)", Panorama: "IUCN PANORAMA – Solutions for a Healthy Planet" }[p.brand] || p.brand}</a>
+            </p>
           )}
           {/* Actions */}
           <div className="flex justify-end gap-3">
@@ -1181,12 +1193,12 @@ export default function EnergyTransitionAtlas() {
         <div className="max-w-7xl mx-auto flex items-center gap-4 overflow-x-auto scrollbar-hide">
           <span className="text-[#C9C9C9] text-xs whitespace-nowrap flex-shrink-0">A platform by</span>
           {[
-            { name: "GINGR", logo: "logos/gingr-white.svg", url: BRAND_LINKS.GINGR },
-            { name: "RGI", logo: "logos/rgi-white.svg", url: BRAND_LINKS.RGI },
-            { name: "IUCN", logo: "logos/iucn.png", url: BRAND_LINKS.IUCN, invert: true },
+            { name: "GINGR", logo: "logos/gingr-white.svg", url: BRAND_LINKS.GINGR, h: "h-[16px]" },
+            { name: "RGI", logo: "logos/rgi-white.svg", url: BRAND_LINKS.RGI, h: "h-[18px]" },
+            { name: "IUCN", logo: "logos/iucn.png", url: BRAND_LINKS.IUCN, invert: true, h: "h-[18px]" },
           ].map(b => (
             <a key={b.name} href={b.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity" title={b.name}>
-              <img src={b.logo} alt={b.name} className={`h-5 w-auto ${b.invert ? "brightness-0 invert" : ""}`} />
+              <img src={b.logo} alt={b.name} className={`${b.h} w-auto ${b.invert ? "brightness-0 invert" : ""}`} />
             </a>
           ))}
           <span className="text-[#C9C9C9]/50 text-xs mx-1 flex-shrink-0">|</span>
@@ -1286,7 +1298,7 @@ export default function EnergyTransitionAtlas() {
             Energy Transition Atlas
           </h2>
           <p className="mt-4 text-[#FFF8E5] text-lg lg:text-xl font-light max-w-3xl leading-relaxed opacity-90">
-            Discover proven approaches to a nature-positive and people-positive energy transition. A shared navigator breaking down silos between partners, sectors, and borders.
+            Explore best practices from across the energy transition — shared by a growing network of partners breaking down silos between organisations, sectors, and borders.
           </p>
         </div>
       </section>
@@ -1308,7 +1320,7 @@ export default function EnergyTransitionAtlas() {
                   { label: "Mission", id: "about-mission" },
                   { label: "Values", id: "about-values" },
                   { label: "How We Collect", id: "about-collection" },
-                  { label: "Grid Award", id: "about-award" },
+                  { label: "RGI Grid Awards", id: "about-award" },
                   { label: "Partners", id: "about-partners" },
                 ].map(s => (
                   <a key={s.id} href={`#${s.id}`}
@@ -1324,18 +1336,22 @@ export default function EnergyTransitionAtlas() {
               <p>Rather than hosting full content, the Atlas links out to the source websites of each practice, keeping content management decentralised while offering unified discovery, filtering, and search.</p>
               <p>The Atlas is owned and managed by the <strong>Global Initiative for Nature, Grids and Renewables (GINGR)</strong>, a joint initiative of the <a href="https://renewables-grid.eu" target="_blank" rel="noopener noreferrer" className="text-[#58044D] underline hover:text-[#58044D]/80">Renewables Grid Initiative (RGI)</a> and the <a href="https://www.iucn.org" target="_blank" rel="noopener noreferrer" className="text-[#58044D] underline hover:text-[#58044D]/80">International Union for Conservation of Nature (IUCN)</a>.</p>
               <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-vision">Our Vision</h3>
-              <p>A rapid energy transition enabled by wind, solar and electricity grids that embraces Nature- and People-Positive goals.</p>
+              <p>A world where proven approaches to the energy transition are openly shared, easily discoverable, and freely adapted — accelerating progress across organisations, sectors, and borders.</p>
               <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-mission">Our Mission</h3>
-              <p>We facilitate Nature- and People-Positive renewable energy and grid deployment by establishing an industry-supported and government-endorsed monitoring and reporting framework on a global scale.</p>
+              <p>The Energy Transition Atlas connects a growing network of partners who document and share best practices in renewable energy and grid development. By bringing these practices together in one place, we make it easier for practitioners, policymakers, and communities to learn from what works.</p>
               <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-values">Our Values</h3>
-              <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                <div className="p-4 bg-white rounded-xl border-l-4 border-emerald-500">
-                  <span className="text-emerald-700 font-bold text-lg">Nature-Positive</span>
-                  <p className="text-sm text-[#424244] mt-1 leading-relaxed">In recognition of the established Nature-Positive definition, we work to identify the specific contributions of the wind, solar and electricity grid sectors to the targets set by the <a href="https://www.cbd.int/gbf" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-900">Kunming-Montreal Global Biodiversity Framework</a>.</p>
+              <div className="grid sm:grid-cols-3 gap-4 mt-4">
+                <div className="p-4 bg-white rounded-xl border-l-4 border-[#58044D]">
+                  <span className="text-[#58044D] font-bold text-lg">Collaboration</span>
+                  <p className="text-sm text-[#424244] mt-1 leading-relaxed">The Atlas is built by many hands. We welcome new partners and believe that sharing knowledge across organisations and borders is the fastest path to a successful energy transition.</p>
                 </div>
-                <div className="p-4 bg-white rounded-xl border-l-4 border-amber-500">
-                  <span className="text-amber-700 font-bold text-lg">People-Positive</span>
-                  <p className="text-sm text-[#424244] mt-1 leading-relaxed">We recognise the undeniable need to involve, respect and engage communities where wind, solar and electricity grids will be built. We aim to quantify progress in co-creating local, sustainable and long-term benefits, guided by frameworks such as the <a href="https://unece.org/environment-policy/public-participation/aarhus-convention/text" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-900">Aarhus Convention</a> on public participation.</p>
+                <div className="p-4 bg-white rounded-xl border-l-4 border-sky-500">
+                  <span className="text-sky-700 font-bold text-lg">Openness</span>
+                  <p className="text-sm text-[#424244] mt-1 leading-relaxed">All practices in the Atlas are freely accessible. We keep content decentralised — linking to source organisations — while providing unified search and discovery for everyone.</p>
+                </div>
+                <div className="p-4 bg-white rounded-xl border-l-4 border-emerald-500">
+                  <span className="text-emerald-700 font-bold text-lg">Evidence-Based</span>
+                  <p className="text-sm text-[#424244] mt-1 leading-relaxed">Every practice in the Atlas is grounded in real-world implementation. We highlight what has been tested, measured, and proven — so others can build on solid foundations.</p>
                 </div>
               </div>
               <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-collection">How Practices Are Collected</h3>
@@ -1347,11 +1363,11 @@ export default function EnergyTransitionAtlas() {
               </ul>
               <p className="text-sm text-[#6B6B6D]">The collection is growing — new partners and practices are added on a rolling basis. If your organisation documents energy transition practices, <a href="#contact" onClick={(e) => { e.preventDefault(); setCurrentPage("#contact"); window.scrollTo(0, 0); }} className="text-[#58044D] underline hover:text-[#58044D]/80">we'd love to hear from you</a>.</p>
 
-              <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-award">The Grid Award</h3>
+              <h3 className="font-['League_Gothic'] text-[#58044D] text-2xl uppercase tracking-wide mt-8" id="about-award">RGI Grid Awards</h3>
               <div className="flex items-start gap-4 mt-4 p-5 bg-white rounded-xl border border-[#C9C9C9]">
                 <div>
-                  <p className="text-sm leading-relaxed">The <span className="inline-flex items-center align-middle"><IconAward /><span className="sr-only">star</span></span> icon on practice cards marks recipients of the <strong>RGI Grid Award</strong>, a recognition for outstanding energy transition practices. Since its founding, the award has honoured initiatives that demonstrate measurable progress toward nature-positive and people-positive energy infrastructure. Currently, {PRACTICES.filter(p => p.award).length} practices in the Atlas carry this distinction. The Grid Award is a recognition programme of the Renewables Grid Initiative (RGI), a founding partner of GINGR.</p>
-                  <a href="https://renewables-grid.eu/good-practices/rgi-good-practice-award.html" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-[#58044D] underline hover:text-[#58044D]/80">Learn more about the Grid Award</a>
+                  <p className="text-sm leading-relaxed">The <span className="inline-flex items-center align-middle"><IconAward /><span className="sr-only">star</span></span> icon on practice cards marks winners of the <strong>RGI Grid Awards: Good Practice of the Year</strong>, an annual recognition by the Renewables Grid Initiative for outstanding energy transition practices. Each year, winners are selected across three categories — Technological Innovation &amp; System Integration, Communication &amp; Engagement, and Environmental Protection — and receive the <strong>Golden Pylon</strong> trophy at a ceremony during the PCI Energy Days in Brussels. Currently, {PRACTICES.filter(p => p.award).length} practices in the Atlas carry this distinction.</p>
+                  <a href="https://renewables-grid.eu/award/" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-[#58044D] underline hover:text-[#58044D]/80">Learn more about the RGI Grid Awards</a>
                 </div>
               </div>
 
@@ -1835,7 +1851,7 @@ export default function EnergyTransitionAtlas() {
                           className="w-full h-48 object-cover bg-[#e2e2e2] transition-transform duration-300 group-hover:scale-105"
                         />
                         {p.award && (
-                          <span className="absolute top-2.5 right-2.5 bg-[#58044D] text-[#FFF8E5] rounded-full p-1.5 shadow-md" title="Grid Award Winner">
+                          <span className="absolute top-2.5 right-2.5 bg-[#58044D] text-[#FFF8E5] rounded-full p-1.5 shadow-md" title="RGI Grid Awards Winner">
                             <IconAward />
                           </span>
                         )}
@@ -1878,7 +1894,7 @@ export default function EnergyTransitionAtlas() {
                           {p.title}
                         </h3>
                         {p.award && (
-                          <span className="text-[#58044D]" title="Grid Award Winner"><IconAward /></span>
+                          <span className="text-[#58044D]" title="RGI Grid Awards Winner"><IconAward /></span>
                         )}
                       </div>
                       <div className="mt-1.5 flex items-center gap-4 text-xs text-[#6B6B6D] flex-wrap">
@@ -1921,14 +1937,14 @@ export default function EnergyTransitionAtlas() {
       {/* ─── 7. Footer ─── */}
       <footer className="bg-[#424244] px-6 py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-10">
             {/* Col 1: Logos + tagline */}
             <div>
               <div className="flex flex-nowrap items-center gap-4">
                 <GreyscaleGINGRLogo />
               </div>
               <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed">
-                The Energy Transition Atlas is owned and managed by the Global Initiative for Nature, Grids and Renewables (GINGR), a joint initiative of the Renewables Grid Initiative (RGI) and the International Union for Conservation of Nature (IUCN). It aims to break down silos between organisations, sectors, and borders by making successful approaches to a Nature- and People-Positive energy transition discoverable and shareable.
+                The Energy Transition Atlas is owned and managed by the Global Initiative for Nature, Grids and Renewables (GINGR), a joint initiative of RGI and IUCN. It brings together a growing network of partners to make proven energy transition practices discoverable and shareable.
               </p>
             </div>
             {/* Col 2: Contact */}
