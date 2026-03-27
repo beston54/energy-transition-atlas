@@ -776,7 +776,7 @@ const SORT_OPTIONS = [
   { value: "za", label: "Z - A" },
 ];
 
-function SortDropdown({ value, onChange }) {
+function SortDropdown({ value, onChange, compact }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -795,10 +795,12 @@ function SortDropdown({ value, onChange }) {
       <button
         onClick={() => setOpen(!open)}
         aria-label="Sort practices"
-        className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#C9C9C9] text-sm text-[#424244] hover:border-[#58044D] transition-colors bg-white"
+        className={compact
+          ? "p-2.5 rounded-full border border-[#C9C9C9] text-[#424244] hover:border-[#58044D] transition-colors bg-white"
+          : "flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#C9C9C9] text-sm text-[#424244] hover:border-[#58044D] transition-colors bg-white"
+        }
       >
-        <span>{current.label}</span>
-        <IconChevronDown />
+        {compact ? <IconSort /> : <><span>{current.label}</span><IconChevronDown /></>}
       </button>
       {open && (
         <div className="absolute right-0 z-50 mt-2 w-44 rounded-xl bg-white shadow-lg border border-[#C9C9C9] py-2">
@@ -1677,9 +1679,9 @@ export default function EnergyTransitionAtlas() {
                 </div>
               )}
 
-              {/* Mobile: Single row — Infrastructure, Theme, More, Sort, View toggle, Search */}
+              {/* Mobile: Single row — Infrastructure, Theme, More, Sort, Search */}
               <div className="md:hidden">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
                   {[basicFilters[0], basicFilters[1]].map((f) => (
                     <div key={f.label}>
                       <FilterDropdown label={f.label} options={f.options} selected={f.selected} onChange={f.onChange} groups={f.groups} searchable={f.searchable} />
@@ -1688,7 +1690,7 @@ export default function EnergyTransitionAtlas() {
                   <button
                     onClick={() => setFilterPanelOpen(!filterPanelOpen)}
                     aria-label="Toggle additional filters"
-                    className={`p-2.5 rounded-full border text-sm font-medium transition-colors ${
+                    className={`flex-shrink-0 p-2.5 rounded-full border text-sm font-medium transition-colors ${
                       filterPanelOpen
                         ? "bg-[#58044D] text-white border-[#58044D]"
                         : "bg-white text-[#58044D] border-[#58044D]"
@@ -1696,18 +1698,11 @@ export default function EnergyTransitionAtlas() {
                   >
                     <IconSettings />
                   </button>
-                  <SortDropdown value={sortMode} onChange={setSortMode} />
-                  <button
-                    onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                    aria-label={viewMode === "grid" ? "Switch to list view" : "Switch to grid view"}
-                    className="p-2.5 rounded-full border border-[#C9C9C9] text-[#424244] bg-white hover:border-[#58044D] transition-colors"
-                  >
-                    {viewMode === "grid" ? <IconListView /> : <IconGridView />}
-                  </button>
+                  <SortDropdown value={sortMode} onChange={setSortMode} compact />
                   <button
                     onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
                     aria-label="Toggle search"
-                    className={`p-2.5 rounded-full border transition-colors ${
+                    className={`flex-shrink-0 p-2.5 rounded-full border transition-colors ${
                       mobileSearchOpen
                         ? "border-[#58044D] text-[#58044D] bg-white"
                         : "border-[#C9C9C9] text-[#424244] bg-white hover:border-[#58044D]"
@@ -1737,7 +1732,7 @@ export default function EnergyTransitionAtlas() {
                 </div>
               )}
 
-              {/* Mobile: Expanded filter panel (Topic, Awards, expanded filters) */}
+              {/* Mobile: Expanded filter panel (Topic, Awards, expanded filters, view) */}
               {filterPanelOpen && (
                 <div className="md:hidden flex flex-col gap-3">
                   <FilterDropdown label={basicFilters[2].label} options={basicFilters[2].options} selected={basicFilters[2].selected} onChange={basicFilters[2].onChange} searchable={basicFilters[2].searchable} />
@@ -1757,6 +1752,30 @@ export default function EnergyTransitionAtlas() {
                   {expandedFilters.map((f) => (
                     <FilterDropdown key={f.label} label={f.label} options={f.options} selected={f.selected} onChange={f.onChange} groups={f.groups} searchable={f.searchable} />
                   ))}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-colors ${
+                        viewMode === "list"
+                          ? "bg-[#58044D] text-white border-[#58044D]"
+                          : "bg-white text-[#424244] border-[#C9C9C9] hover:border-[#58044D]"
+                      }`}
+                    >
+                      <IconListView />
+                      <span>List</span>
+                    </button>
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-colors ${
+                        viewMode === "grid"
+                          ? "bg-[#58044D] text-white border-[#58044D]"
+                          : "bg-white text-[#424244] border-[#C9C9C9] hover:border-[#58044D]"
+                      }`}
+                    >
+                      <IconGridView />
+                      <span>Grid</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
