@@ -171,8 +171,41 @@ Use the Admin page's "Edit About Page" tab. Changes are saved to `admin-config.j
 - **About page text is now dynamic.** Loaded from `admin-config.json` at runtime via `fetch()`. Falls back to inline defaults if the file is missing or fails to load. Editable through the admin page.
 - **Submit page is now informational.** No form — shows submission criteria inline and partner pathway cards with external links. The `SubmissionCriteriaModal` component was removed.
 - **Contact page has no form.** Just email link + address + CSV export. `contactForm`/`contactSuccess` states were removed.
-- **Hero graphic is desktop-only.** The `HeroGraphic` component renders an animated SVG (globe + topic icons). Hidden below `lg` breakpoint. Uses CSS `@keyframes` for rotation and floating animations.
+- **Hero graphic is responsive.** The `HeroGraphic` component renders an animated SVG (globe + topic icons). On mobile it appears below the text (smaller, `w-48`), on desktop it sits to the right (`lg:w-5/12`). Uses CSS `@keyframes` for rotation and floating animations.
 - **csv_to_jsx.py uses relative paths.** Updated from hardcoded `/Users/intern/Desktop/ETA/` to `os.path.dirname(__file__)`.
+
+## Custom Domain Setup
+
+The site is hosted on GitHub Pages. To add a custom domain:
+
+1. **Buy a domain** from any registrar (Namecheap, Cloudflare, etc.)
+2. **DNS records** — add four A records pointing to GitHub's IPs:
+   - `185.199.108.153`
+   - `185.199.109.153`
+   - `185.199.110.153`
+   - `185.199.111.153`
+   - Optionally add a CNAME for `www` → `beston54.github.io`
+3. **GitHub Settings** — repo Settings → Pages → Custom domain → enter the domain → check "Enforce HTTPS"
+4. GitHub auto-creates a `CNAME` file in the repo. HTTPS certificate provisions within ~30 minutes.
+5. The admin page will be accessible at `https://yourdomain.com/admin.html`
+
+## Admin Page
+
+**URL:** `admin.html` (not linked from the main navigation — direct URL only)
+
+**Authentication:** Uses a GitHub Personal Access Token (PAT) entered at runtime. The token is stored in `sessionStorage` only (cleared on tab close) and is never committed to the repository. Only users with write access to the GitHub repo can use the admin page.
+
+**How to create a token:**
+1. GitHub → Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens
+2. Set repository access to this repo only
+3. Grant "Contents: Read and write" permission
+4. Generate and copy the token
+
+**Features:**
+- **Upload CSV tab:** Drag-and-drop `practices_master.csv`. The file is committed to the repo via GitHub API. A GitHub Action (`.github/workflows/update-practices.yml`) automatically runs `csv_to_jsx.py` to regenerate the PRACTICES array and commits the result.
+- **Edit About Page tab:** Edit vision, mission, values, collection text, and partner CTA. Changes are saved to `admin-config.json` via GitHub API and appear on the live site immediately (the JSX component loads this file at runtime via `fetch()`).
+
+**Security:** The admin page is publicly accessible (it's in a public repo) but does nothing without a valid PAT. Security comes from the GitHub token, not from hiding the page. To restrict further, move the repo to a company GitHub org and/or make it private (requires a paid GitHub plan for Pages on private repos).
 
 ## Completed Sprints (Summary)
 
