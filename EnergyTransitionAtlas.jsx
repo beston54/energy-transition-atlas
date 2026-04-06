@@ -645,13 +645,13 @@ const IconSort = () => (
    ══════════════════════════════════════════════════════════════════════════════ */
 function HeroGraphic() {
   return (
-    <div className="relative w-full max-w-[380px] mx-auto" style={{ aspectRatio: "1" }}>
+    <div className="relative w-full max-w-[340px] mx-auto" style={{ aspectRatio: "1" }}>
       <style>{`
         @keyframes hero-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes hero-float-1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes hero-float-2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes hero-float-3 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        @keyframes hero-pulse { 0%,100% { opacity: 0.25; } 50% { opacity: 0.45; } }
+        @keyframes hero-pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.55; } }
         .hero-globe { animation: hero-spin 90s linear infinite; transform-origin: center; }
         .hero-icon-1 { animation: hero-float-1 4s ease-in-out infinite; }
         .hero-icon-2 { animation: hero-float-2 5s ease-in-out infinite 0.5s; }
@@ -662,98 +662,139 @@ function HeroGraphic() {
       `}</style>
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         {/* Pulsing outer ring */}
-        <circle cx="200" cy="200" r="185" fill="none" stroke="#FFF8E5" strokeWidth="0.5" className="hero-ring-pulse" />
-        <circle cx="200" cy="200" r="170" fill="none" stroke="#FFF8E5" strokeWidth="0.5" opacity="0.15" className="hero-ring-pulse" style={{ animationDelay: "2s" }} />
+        <circle cx="200" cy="200" r="185" fill="none" stroke="#FFF8E5" strokeWidth="1" className="hero-ring-pulse" />
+        <circle cx="200" cy="200" r="170" fill="none" stroke="#FFF8E5" strokeWidth="0.8" opacity="0.2" className="hero-ring-pulse" style={{ animationDelay: "2s" }} />
 
         {/* Globe group — rotates slowly */}
         <g className="hero-globe">
           {/* Globe outline */}
-          <circle cx="200" cy="200" r="120" fill="none" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.5" />
+          <circle cx="200" cy="200" r="120" fill="none" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.6" />
           {/* Equator */}
-          <ellipse cx="200" cy="200" rx="120" ry="30" fill="none" stroke="#FFF8E5" strokeWidth="0.8" opacity="0.35" />
+          <ellipse cx="200" cy="200" rx="120" ry="30" fill="none" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.4" />
           {/* Latitude lines */}
-          <ellipse cx="200" cy="160" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="0.6" opacity="0.25" />
-          <ellipse cx="200" cy="240" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="0.6" opacity="0.25" />
+          <ellipse cx="200" cy="160" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="1.2" opacity="0.3" />
+          <ellipse cx="200" cy="240" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="1.2" opacity="0.3" />
           {/* Meridian */}
-          <ellipse cx="200" cy="200" rx="30" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="0.8" opacity="0.35" />
+          <ellipse cx="200" cy="200" rx="30" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.4" />
           {/* Secondary meridian */}
-          <ellipse cx="200" cy="200" rx="80" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="0.6" opacity="0.2" />
+          <ellipse cx="200" cy="200" rx="80" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="1" opacity="0.25" />
         </g>
 
         {/* Compass cross — static */}
-        <line x1="200" y1="60" x2="200" y2="75" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.6" />
-        <line x1="200" y1="325" x2="200" y2="340" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.6" />
-        <line x1="60" y1="200" x2="75" y2="200" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.6" />
-        <line x1="325" y1="200" x2="340" y2="200" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.6" />
+        <line x1="200" y1="55" x2="200" y2="73" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
+        <line x1="200" y1="327" x2="200" y2="345" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
+        <line x1="55" y1="200" x2="73" y2="200" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
+        <line x1="327" y1="200" x2="345" y2="200" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
         {/* Compass N */}
-        <text x="200" y="52" textAnchor="middle" fill="#FFF8E5" fontSize="12" fontWeight="bold" opacity="0.5">N</text>
+        <text x="200" y="47" textAnchor="middle" fill="#FFF8E5" fontSize="14" fontWeight="bold" opacity="0.7">N</text>
 
         {/* ── Floating topic icons ── */}
 
-        {/* Wind turbine — top right */}
-        <g className="hero-icon-1" opacity="0.8">
-          <g transform="translate(310, 85)">
-            <line x1="0" y1="8" x2="0" y2="28" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <line x1="0" y1="8" x2="-10" y2="-4" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="0" y1="8" x2="11" y2="-2" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="0" y1="8" x2="1" y2="0" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="0" cy="8" r="2.5" fill="#FFF8E5" />
+        {/* Wind turbine — top right: 3-blade turbine with nacelle on tower */}
+        <g className="hero-icon-1" opacity="0.9">
+          <g transform="translate(318, 78)">
+            {/* Tower */}
+            <line x1="0" y1="0" x2="0" y2="40" stroke="#FFF8E5" strokeWidth="3" strokeLinecap="round" />
+            <line x1="-8" y1="40" x2="8" y2="40" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Nacelle */}
+            <rect x="-4" y="-3" width="8" height="6" rx="1.5" fill="#FFF8E5" opacity="0.5" />
+            {/* 3 blades */}
+            <line x1="0" y1="0" x2="0" y2="-22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="0" y1="0" x2="19" y2="11" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="0" y1="0" x2="-19" y2="11" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="0" cy="0" r="3.5" fill="#FFF8E5" />
           </g>
         </g>
 
-        {/* Solar panel — bottom right */}
-        <g className="hero-icon-2" opacity="0.7">
-          <g transform="translate(320, 300)">
-            <rect x="-14" y="-10" width="28" height="20" rx="2" fill="none" stroke="#FFF8E5" strokeWidth="1.5" />
-            <line x1="-14" y1="-3" x2="14" y2="-3" stroke="#FFF8E5" strokeWidth="0.8" />
-            <line x1="-14" y1="4" x2="14" y2="4" stroke="#FFF8E5" strokeWidth="0.8" />
-            <line x1="-5" y1="-10" x2="-5" y2="10" stroke="#FFF8E5" strokeWidth="0.8" />
-            <line x1="5" y1="-10" x2="5" y2="10" stroke="#FFF8E5" strokeWidth="0.8" />
-            <line x1="0" y1="10" x2="0" y2="18" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Solar panel — bottom right: angled panel with sun */}
+        <g className="hero-icon-2" opacity="0.9">
+          <g transform="translate(330, 308)">
+            {/* Panel (tilted) */}
+            <g transform="rotate(-15)">
+              <rect x="-20" y="-14" width="40" height="28" rx="2" fill="none" stroke="#FFF8E5" strokeWidth="2.5" />
+              <line x1="-20" y1="-5" x2="20" y2="-5" stroke="#FFF8E5" strokeWidth="1.5" />
+              <line x1="-20" y1="5" x2="20" y2="5" stroke="#FFF8E5" strokeWidth="1.5" />
+              <line x1="-7" y1="-14" x2="-7" y2="14" stroke="#FFF8E5" strokeWidth="1.5" />
+              <line x1="7" y1="-14" x2="7" y2="14" stroke="#FFF8E5" strokeWidth="1.5" />
+            </g>
+            {/* Stand */}
+            <line x1="0" y1="14" x2="0" y2="24" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="-10" y1="24" x2="10" y2="24" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            {/* Small sun */}
+            <circle cx="24" cy="-22" r="5" fill="none" stroke="#FFF8E5" strokeWidth="2" />
+            <line x1="24" y1="-30" x2="24" y2="-32" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="24" y1="-14" x2="24" y2="-12" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="16" y1="-22" x2="14" y2="-22" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="32" y1="-22" x2="34" y2="-22" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* Power lines / pylon — bottom left */}
-        <g className="hero-icon-3" opacity="0.75">
-          <g transform="translate(72, 310)">
-            <line x1="0" y1="-15" x2="0" y2="15" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <line x1="-10" y1="-8" x2="10" y2="-8" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="-7" y1="0" x2="7" y2="0" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="-10" y1="-8" x2="-5" y2="-15" stroke="#FFF8E5" strokeWidth="1" />
-            <line x1="10" y1="-8" x2="5" y2="-15" stroke="#FFF8E5" strokeWidth="1" />
+        {/* Power pylon — bottom left: lattice tower with wires */}
+        <g className="hero-icon-3" opacity="0.9">
+          <g transform="translate(68, 315)">
+            {/* Lattice tower body */}
+            <line x1="-6" y1="-30" x2="-12" y2="22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="6" y1="-30" x2="12" y2="22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Cross braces */}
+            <line x1="-9" y1="-4" x2="9" y2="-4" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <line x1="-11" y1="9" x2="11" y2="9" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <line x1="-7" y1="-17" x2="7" y2="-17" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            {/* Arms */}
+            <line x1="-18" y1="-26" x2="18" y2="-26" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <line x1="-6" y1="-30" x2="-18" y2="-26" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <line x1="6" y1="-30" x2="18" y2="-26" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            {/* Wires drooping out */}
+            <path d="M-18,-26 Q-30,-20 -38,-24" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M18,-26 Q30,-20 38,-24" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* Leaf — top left */}
-        <g className="hero-icon-4" opacity="0.8">
-          <g transform="translate(75, 95)">
-            <path d="M0,12 Q-12,-4 0,-14 Q12,-4 0,12 Z" fill="none" stroke="#FFF8E5" strokeWidth="1.5" />
-            <line x1="0" y1="12" x2="0" y2="-8" stroke="#FFF8E5" strokeWidth="1" />
-            <path d="M0,4 Q-5,0 -6,-4" fill="none" stroke="#FFF8E5" strokeWidth="0.8" />
-            <path d="M0,0 Q5,-3 7,-6" fill="none" stroke="#FFF8E5" strokeWidth="0.8" />
+        {/* Leaf — top left: larger leaf with veins and stem */}
+        <g className="hero-icon-4" opacity="0.9">
+          <g transform="translate(72, 88)">
+            {/* Leaf shape */}
+            <path d="M0,20 Q-20,-2 0,-24 Q20,-2 0,20 Z" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* Central vein */}
+            <line x1="0" y1="18" x2="0" y2="-18" stroke="#FFF8E5" strokeWidth="2" />
+            {/* Side veins */}
+            <path d="M0,10 Q-8,5 -12,0" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,10 Q8,5 12,0" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,2 Q-7,-3 -10,-8" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,2 Q7,-3 10,-8" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Stem */}
+            <path d="M0,20 Q3,26 2,32" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" fill="none" />
           </g>
         </g>
 
-        {/* People — left center */}
-        <g className="hero-icon-5" opacity="0.7">
-          <g transform="translate(48, 195)">
-            <circle cx="-6" cy="-8" r="4" fill="none" stroke="#FFF8E5" strokeWidth="1.5" />
-            <path d="M-6,-4 L-6,6" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M-6,6 L-10,14" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M-6,6 L-2,14" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
-            <circle cx="8" cy="-8" r="4" fill="none" stroke="#FFF8E5" strokeWidth="1.5" />
-            <path d="M8,-4 L8,6" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M8,6 L4,14" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M8,6 L12,14" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
+        {/* People — left center: three person silhouettes */}
+        <g className="hero-icon-5" opacity="0.9">
+          <g transform="translate(42, 190)">
+            {/* Center person (front, larger) */}
+            <circle cx="0" cy="-12" r="6" fill="none" stroke="#FFF8E5" strokeWidth="2.5" />
+            <path d="M0,-6 L0,8" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M0,8 L-7,20" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,8 L7,20" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,0 L-9,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,0 L9,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            {/* Left person (behind, smaller) */}
+            <circle cx="-16" cy="-8" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" opacity="0.7" />
+            <path d="M-16,-3.5 L-16,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+            <path d="M-16,6 L-21,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+            <path d="M-16,6 L-11,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+            {/* Right person (behind, smaller) */}
+            <circle cx="16" cy="-8" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" opacity="0.7" />
+            <path d="M16,-3.5 L16,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+            <path d="M16,6 L11,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+            <path d="M16,6 L21,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
           </g>
         </g>
 
         {/* Small decorative dots */}
-        <circle cx="155" cy="65" r="2" fill="#FFF8E5" opacity="0.3" />
-        <circle cx="340" cy="190" r="1.5" fill="#FFF8E5" opacity="0.25" />
-        <circle cx="250" cy="350" r="2" fill="#FFF8E5" opacity="0.2" />
-        <circle cx="55" cy="260" r="1.5" fill="#FFF8E5" opacity="0.3" />
-        <circle cx="270" cy="55" r="1.5" fill="#FFF8E5" opacity="0.25" />
+        <circle cx="155" cy="65" r="2.5" fill="#FFF8E5" opacity="0.35" />
+        <circle cx="345" cy="190" r="2" fill="#FFF8E5" opacity="0.3" />
+        <circle cx="250" cy="355" r="2.5" fill="#FFF8E5" opacity="0.25" />
+        <circle cx="55" cy="255" r="2" fill="#FFF8E5" opacity="0.35" />
+        <circle cx="270" cy="55" r="2" fill="#FFF8E5" opacity="0.3" />
       </svg>
     </div>
   );
@@ -1319,7 +1360,7 @@ export default function EnergyTransitionAtlas() {
       <header className="sticky top-0 z-40 bg-[#6B21A8] px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1
-            className={`font-['League_Gothic'] text-[#FFF8E5] text-xl tracking-widest uppercase transition-opacity duration-300 cursor-pointer min-w-0 truncate ${
+            className={`font-['League_Gothic'] text-[#FFF8E5] text-lg sm:text-xl tracking-wide sm:tracking-widest uppercase transition-opacity duration-300 cursor-pointer min-w-0 ${
               scrolledPastHero ? "opacity-100" : "opacity-0"
             }`}
             onClick={() => {
@@ -1389,20 +1430,20 @@ export default function EnergyTransitionAtlas() {
       </header>
 
       {/* ���── 3. Hero Section ─── */}
-      <section ref={heroRef} className="bg-[#6B21A8] px-6 py-12 lg:py-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="lg:w-1/2">
+      <section ref={heroRef} className="bg-[#6B21A8] px-6 py-8 lg:py-10 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center lg:justify-between gap-6 lg:gap-0">
+          <div className="lg:w-1/2 text-center lg:text-left">
             <h2
-              className={`font-['League_Gothic'] text-white text-3xl sm:text-5xl lg:text-7xl uppercase tracking-wide leading-tight ${!isHome ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
+              className={`font-['League_Gothic'] text-white text-4xl sm:text-5xl lg:text-7xl uppercase tracking-wide leading-tight ${!isHome ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
               onClick={() => { if (!isHome) navigateTo("#/"); }}
             >
               Energy Transition Atlas
             </h2>
-            <p className="mt-4 text-[#FFF8E5] text-lg lg:text-xl font-light max-w-3xl leading-relaxed opacity-90">
+            <p className="mt-3 lg:mt-4 text-[#FFF8E5] text-base lg:text-xl font-light max-w-3xl leading-relaxed opacity-90 mx-auto lg:mx-0">
               Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners.
             </p>
           </div>
-          <div className="hidden lg:block lg:w-5/12">
+          <div className="w-48 sm:w-56 lg:w-5/12">
             <HeroGraphic />
           </div>
         </div>
