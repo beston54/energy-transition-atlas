@@ -1431,20 +1431,26 @@ export default function EnergyTransitionAtlas() {
 
       {/* ���── 3. Hero Section ─── */}
       <section ref={heroRef} className="bg-[#6B21A8] px-6 py-8 lg:py-10 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center lg:justify-between gap-6 lg:gap-0">
-          <div className="lg:w-1/2 text-center lg:text-left">
-            <h2
-              className={`font-['League_Gothic'] text-white text-4xl sm:text-5xl lg:text-7xl uppercase tracking-wide leading-tight ${!isHome ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
-              onClick={() => { if (!isHome) navigateTo("#/"); }}
-            >
-              Energy Transition Atlas
-            </h2>
-            <p className="mt-3 lg:mt-4 text-[#FFF8E5] text-base lg:text-xl font-light max-w-3xl leading-relaxed opacity-90 mx-auto lg:mx-0">
-              Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners.
-            </p>
+        <div className="max-w-7xl mx-auto relative">
+          {/* Graphic — behind text on mobile, beside text on desktop */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-20 lg:opacity-100 lg:relative lg:hidden pointer-events-none">
+            <div className="w-64 sm:w-72"><HeroGraphic /></div>
           </div>
-          <div className="w-48 sm:w-56 lg:w-5/12">
-            <HeroGraphic />
+          <div className="flex items-center lg:justify-between">
+            <div className="relative z-10 lg:w-7/12">
+              <h2
+                className={`font-['League_Gothic'] text-white text-5xl sm:text-6xl lg:text-7xl uppercase tracking-wide leading-[0.95] ${!isHome ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
+                onClick={() => { if (!isHome) navigateTo("#/"); }}
+              >
+                Energy Transition Atlas
+              </h2>
+              <p className="mt-3 lg:mt-4 text-[#FFF8E5] text-sm sm:text-base lg:text-xl font-light max-w-xl lg:max-w-3xl leading-relaxed opacity-90">
+                Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners.
+              </p>
+            </div>
+            <div className="hidden lg:block lg:w-5/12">
+              <HeroGraphic />
+            </div>
           </div>
         </div>
       </section>
