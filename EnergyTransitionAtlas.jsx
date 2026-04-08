@@ -647,191 +647,157 @@ function HeroGraphic() {
   return (
     <div className="relative w-full max-w-[340px] mx-auto" style={{ aspectRatio: "1" }}>
       <style>{`
-        @keyframes hero-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes hero-float-1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes hero-float-2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes hero-float-3 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        @keyframes hero-pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.55; } }
-        @keyframes hero-dash { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -60; } }
-        .hero-globe { transform-origin: center; }
+        @keyframes hero-bird-float { 0%,100% { transform: translate(0,0); } 25% { transform: translate(6px,-4px); } 75% { transform: translate(-4px,-2px); } }
+        @keyframes hero-bird-float-2 { 0%,100% { transform: translate(0,0); } 30% { transform: translate(3px,-3px); } 70% { transform: translate(-2px,-1px); } }
+        @keyframes hero-cloud-drift { 0%,100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
         @media (prefers-reduced-motion: no-preference) {
-          .hero-globe { animation: hero-spin 90s linear infinite; }
-          .hero-icon-1 { animation: hero-float-1 4s ease-in-out infinite; }
-          .hero-icon-2 { animation: hero-float-2 5s ease-in-out infinite 0.5s; }
-          .hero-icon-3 { animation: hero-float-3 4.5s ease-in-out infinite 1s; }
-          .hero-icon-4 { animation: hero-float-1 5.5s ease-in-out infinite 1.5s; }
-          .hero-icon-5 { animation: hero-float-2 4s ease-in-out infinite 2s; }
-          .hero-ring-pulse { animation: hero-pulse 6s ease-in-out infinite; }
-          .hero-route { animation: hero-dash 20s linear infinite; }
+          .hero-bird { animation: hero-bird-float 6s ease-in-out infinite; }
+          .hero-bird-2 { animation: hero-bird-float-2 8s ease-in-out infinite 2s; }
+          .hero-cloud { animation: hero-cloud-drift 15s ease-in-out infinite; }
         }
       `}</style>
-      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        {/* Pulsing outer ring */}
-        <circle cx="200" cy="200" r="185" fill="none" stroke="#FFF8E5" strokeWidth="1" className="hero-ring-pulse" />
-        <circle cx="200" cy="200" r="170" fill="none" stroke="#FFF8E5" strokeWidth="0.8" opacity="0.2" className="hero-ring-pulse" style={{ animationDelay: "2s" }} />
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true">
 
-        {/* Globe group — rotates slowly */}
-        <g className="hero-globe">
-          {/* Globe outline */}
-          <circle cx="200" cy="200" r="120" fill="none" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.6" />
-          {/* Equator */}
-          <ellipse cx="200" cy="200" rx="120" ry="30" fill="none" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.4" />
-          {/* Latitude lines */}
-          <ellipse cx="200" cy="160" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="1.2" opacity="0.3" />
-          <ellipse cx="200" cy="240" rx="105" ry="22" fill="none" stroke="#FFF8E5" strokeWidth="1.2" opacity="0.3" />
-          {/* Meridian */}
-          <ellipse cx="200" cy="200" rx="30" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="1.5" opacity="0.4" />
-          {/* Secondary meridian */}
-          <ellipse cx="200" cy="200" rx="80" ry="120" fill="none" stroke="#FFF8E5" strokeWidth="1" opacity="0.25" />
+        {/* Distant hills */}
+        <path d="M0,290 Q45,270 95,282 Q150,295 200,275 Q250,260 310,278 Q360,290 400,272" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.18" />
+
+        {/* Clouds */}
+        <g className="hero-cloud" opacity="0.28">
+          <path d="M52,58 Q58,42 72,44 Q78,32 92,38 Q102,30 112,40 Q120,36 124,46 Q132,44 130,56" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+        <g className="hero-cloud" opacity="0.2" style={{ animationDelay: "5s" }}>
+          <path d="M280,42 Q286,30 296,34 Q302,26 312,32 Q318,28 322,38 Q328,36 326,46" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </g>
 
-        {/* Compass cross — static */}
-        <line x1="200" y1="55" x2="200" y2="73" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
-        <line x1="200" y1="327" x2="200" y2="345" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
-        <line x1="55" y1="200" x2="73" y2="200" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
-        <line x1="327" y1="200" x2="345" y2="200" stroke="#FFF8E5" strokeWidth="2.5" opacity="0.7" strokeLinecap="round" />
-        {/* Compass N */}
-        <text x="200" y="47" textAnchor="middle" fill="#FFF8E5" fontSize="14" fontWeight="bold" opacity="0.7">N</text>
+        {/* Left pylon — taller, foreground */}
+        <g opacity="0.85">
+          {/* Legs */}
+          <path d="M78,320 Q80,230 84,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M108,320 Q106,232 102,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Cross braces */}
+          <path d="M82,180 Q93,177 104,180" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M80,220 Q93,217 106,220" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M79,260 Q93,257 107,260" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          {/* X braces */}
+          <path d="M82,180 Q94,200 106,220" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          <path d="M104,180 Q92,200 80,220" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          <path d="M80,220 Q94,240 107,260" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          <path d="M106,220 Q92,240 79,260" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          {/* Top piece */}
+          <path d="M84,145 Q93,138 102,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M93,138 Q92,128 93,120" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Arms */}
+          <path d="M62,142 Q72,138 84,145" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M102,145 Q114,138 124,142" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          {/* Insulators */}
+          <path d="M62,142 Q63,148 62,152" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M124,142 Q123,148 124,152" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+        </g>
 
-        {/* ── Floating topic icons ── */}
+        {/* Right pylon — shorter, background perspective */}
+        <g opacity="0.7">
+          {/* Legs */}
+          <path d="M298,322 Q300,252 302,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M322,322 Q320,254 318,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          {/* Cross braces */}
+          <path d="M300,225 Q310,222 320,225" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M299,260 Q310,257 321,260" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M298,295 Q310,292 322,295" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* X braces */}
+          <path d="M300,225 Q310,243 321,260" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
+          <path d="M320,225 Q310,243 299,260" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
+          {/* Top piece */}
+          <path d="M302,192 Q310,186 318,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M310,186 Q309,178 310,172" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          {/* Arms */}
+          <path d="M286,190 Q294,186 302,192" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M318,192 Q326,186 334,190" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          {/* Insulators */}
+          <path d="M286,190 Q287,195 286,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M334,190 Q333,195 334,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        </g>
 
-        {/* Wind turbine — top right: 3-blade turbine with nacelle on tower */}
-        <g className="hero-icon-1" opacity="0.9">
-          <g transform="translate(318, 78)">
-            {/* Tower */}
-            <line x1="0" y1="0" x2="0" y2="40" stroke="#FFF8E5" strokeWidth="3" strokeLinecap="round" />
-            <line x1="-8" y1="40" x2="8" y2="40" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Nacelle */}
-            <rect x="-4" y="-3" width="8" height="6" rx="1.5" fill="#FFF8E5" opacity="0.5" />
-            {/* 3 blades */}
-            <line x1="0" y1="0" x2="0" y2="-22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="0" y1="0" x2="19" y2="11" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="0" y1="0" x2="-19" y2="11" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx="0" cy="0" r="3.5" fill="#FFF8E5" />
+        {/* Power lines — catenary curves between pylons */}
+        <path d="M62,152 Q180,215 286,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.55" />
+        <path d="M124,152 Q210,220 334,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+        <path d="M93,120 Q200,170 310,172" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" opacity="0.4" />
+
+        {/* Secondary bird — smaller, background */}
+        <g className="hero-bird-2" opacity="0.45">
+          <g transform="translate(270, 68)">
+            <path d="M-14,5 Q-6,-3 0,0 Q6,-3 14,5" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="0" cy="1" r="1" fill="#FFF8E5" />
           </g>
         </g>
 
-        {/* Solar panel — bottom right: angled panel with sun */}
-        <g className="hero-icon-2" opacity="0.9">
-          <g transform="translate(330, 308)">
-            {/* Panel (tilted) */}
-            <g transform="rotate(-15)">
-              <rect x="-20" y="-14" width="40" height="28" rx="2" fill="none" stroke="#FFF8E5" strokeWidth="2.5" />
-              <line x1="-20" y1="-5" x2="20" y2="-5" stroke="#FFF8E5" strokeWidth="1.5" />
-              <line x1="-20" y1="5" x2="20" y2="5" stroke="#FFF8E5" strokeWidth="1.5" />
-              <line x1="-7" y1="-14" x2="-7" y2="14" stroke="#FFF8E5" strokeWidth="1.5" />
-              <line x1="7" y1="-14" x2="7" y2="14" stroke="#FFF8E5" strokeWidth="1.5" />
-            </g>
-            {/* Stand */}
-            <line x1="0" y1="14" x2="0" y2="24" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="-10" y1="24" x2="10" y2="24" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            {/* Small sun */}
-            <circle cx="24" cy="-22" r="5" fill="none" stroke="#FFF8E5" strokeWidth="2" />
-            <line x1="24" y1="-30" x2="24" y2="-32" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="24" y1="-14" x2="24" y2="-12" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="16" y1="-22" x2="14" y2="-22" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="32" y1="-22" x2="34" y2="-22" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Primary bird — larger, foreground */}
+        <g className="hero-bird" opacity="0.85">
+          <g transform="translate(195, 95)">
+            <path d="M-24,9 Q-12,-5 0,0 Q12,-5 24,9" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="0" cy="1.5" r="1.8" fill="#FFF8E5" />
           </g>
         </g>
 
-        {/* Power pylon — bottom left: lattice tower with wires */}
-        <g className="hero-icon-3" opacity="0.9">
-          <g transform="translate(68, 315)">
-            {/* Lattice tower body */}
-            <line x1="-6" y1="-30" x2="-12" y2="22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="6" y1="-30" x2="12" y2="22" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Cross braces */}
-            <line x1="-9" y1="-4" x2="9" y2="-4" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <line x1="-11" y1="9" x2="11" y2="9" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <line x1="-7" y1="-17" x2="7" y2="-17" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            {/* Arms */}
-            <line x1="-18" y1="-26" x2="18" y2="-26" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="-6" y1="-30" x2="-18" y2="-26" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <line x1="6" y1="-30" x2="18" y2="-26" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            {/* Wires drooping out */}
-            <path d="M-18,-26 Q-30,-20 -38,-24" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M18,-26 Q30,-20 38,-24" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Third bird — tiny, far away */}
+        <g className="hero-bird-2" opacity="0.3" style={{ animationDelay: "4s" }}>
+          <g transform="translate(155, 55)">
+            <path d="M-8,3 Q-4,-2 0,0 Q4,-2 8,3" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* Leaf — left center: larger leaf with veins and stem */}
-        <g className="hero-icon-4" opacity="0.9">
-          <g transform="translate(42, 190)">
-            {/* Leaf shape */}
-            <path d="M0,20 Q-20,-2 0,-24 Q20,-2 0,20 Z" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinejoin="round" />
-            {/* Central vein */}
-            <line x1="0" y1="18" x2="0" y2="-18" stroke="#FFF8E5" strokeWidth="2" />
-            {/* Side veins */}
-            <path d="M0,10 Q-8,5 -12,0" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M0,10 Q8,5 12,0" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M0,2 Q-7,-3 -10,-8" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M0,2 Q7,-3 10,-8" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            {/* Stem */}
-            <path d="M0,20 Q3,26 2,32" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" fill="none" />
+        {/* Walking people — three figures on the ground */}
+        <g opacity="0.8">
+          {/* Person 1 — front, larger, mid-stride */}
+          <g transform="translate(165, 295)">
+            <circle cx="0" cy="-18" r="5.5" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M0,-12.5 Q1,-4 0,4" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M0,4 Q-5,14 -9,22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,4 Q6,14 10,22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,-6 Q-7,-2 -11,2" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,-6 Q8,0 12,4" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          </g>
+
+          {/* Person 2 — slightly behind, walking */}
+          <g transform="translate(200, 300)">
+            <circle cx="0" cy="-15" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,-10.5 Q-1,-3 0,3" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,3 Q-4,12 -7,18" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,3 Q5,12 8,18" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-5 Q-6,0 -9,3" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-5 Q5,-2 9,2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          </g>
+
+          {/* Person 3 — smaller, further back */}
+          <g transform="translate(232, 306)" opacity="0.65">
+            <circle cx="0" cy="-12" r="3.5" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-8.5 Q0,-3 0,2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,2 Q-3,9 -5,14" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,2 Q4,9 6,14" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-3 Q-4,0 -7,2" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-3 Q5,-1 7,1" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* People — top left: three person silhouettes */}
-        <g className="hero-icon-5" opacity="0.9">
-          <g transform="translate(72, 88)">
-            {/* Center person (front, larger) */}
-            <circle cx="0" cy="-12" r="6" fill="none" stroke="#FFF8E5" strokeWidth="2.5" />
-            <path d="M0,-6 L0,8" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <path d="M0,8 L-7,20" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,8 L7,20" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,0 L-9,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,0 L9,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            {/* Left person (behind, smaller) */}
-            <circle cx="-16" cy="-8" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" opacity="0.7" />
-            <path d="M-16,-3.5 L-16,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-            <path d="M-16,6 L-21,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-            <path d="M-16,6 L-11,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-            {/* Right person (behind, smaller) */}
-            <circle cx="16" cy="-8" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" opacity="0.7" />
-            <path d="M16,-3.5 L16,6" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-            <path d="M16,6 L11,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-            <path d="M16,6 L21,15" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-          </g>
+        {/* Ground line — wobbly horizon */}
+        <path d="M0,324 Q30,319 65,322 Q100,326 140,320 Q180,316 220,322 Q260,327 300,320 Q340,315 370,322 Q390,326 400,321" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" opacity="0.6" />
+        <path d="M0,332 Q40,328 80,330 Q130,334 180,328 Q230,324 280,330 Q330,335 380,328 Q395,326 400,329" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.25" />
+
+        {/* Grass tufts */}
+        <g opacity="0.4">
+          <path d="M30,322 Q28,312 32,306" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M33,321 Q36,313 34,305" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M36,322 Q40,314 38,308" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+
+          <path d="M140,319 Q138,311 141,305" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M143,318 Q146,312 144,306" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+
+          <path d="M260,324 Q258,316 261,310" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M264,323 Q267,316 264,310" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+          <path d="M267,324 Q270,317 268,312" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
+
+          <path d="M350,320 Q348,312 351,307" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M354,319 Q356,312 353,306" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
         </g>
-
-        {/* Arrow marker for navigation routes */}
-        <defs>
-          <marker id="nav-arrow" viewBox="0 0 8 6" refX="8" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-            <path d="M0,0 L8,3 L0,6" fill="none" stroke="#FFF8E5" strokeWidth="1" opacity="0.25" />
-          </marker>
-        </defs>
-
-        {/* Animated dotted navigation routes */}
-        <path
-          d="M72,88 Q200,50 318,78 Q380,180 330,308"
-          fill="none" stroke="#FFF8E5" strokeWidth="1"
-          strokeDasharray="8 12" opacity="0.15"
-          markerEnd="url(#nav-arrow)"
-          className="hero-route"
-        />
-        <path
-          d="M68,315 Q120,200 200,160 Q280,120 318,78"
-          fill="none" stroke="#FFF8E5" strokeWidth="1"
-          strokeDasharray="8 12" opacity="0.12"
-          markerEnd="url(#nav-arrow)"
-          className="hero-route"
-          style={{ animationDuration: '25s', animationDirection: 'reverse' }}
-        />
-        <path
-          d="M42,190 Q140,260 250,355 Q340,340 345,190"
-          fill="none" stroke="#FFF8E5" strokeWidth="1"
-          strokeDasharray="8 12" opacity="0.13"
-          markerEnd="url(#nav-arrow)"
-          className="hero-route"
-          style={{ animationDuration: '30s' }}
-        />
-
-        {/* Small decorative dots */}
-        <circle cx="155" cy="65" r="2.5" fill="#FFF8E5" opacity="0.35" />
-        <circle cx="345" cy="190" r="2" fill="#FFF8E5" opacity="0.3" />
-        <circle cx="250" cy="355" r="2.5" fill="#FFF8E5" opacity="0.25" />
-        <circle cx="55" cy="255" r="2" fill="#FFF8E5" opacity="0.35" />
-        <circle cx="270" cy="55" r="2" fill="#FFF8E5" opacity="0.3" />
       </svg>
     </div>
   );
@@ -1470,7 +1436,7 @@ export default function EnergyTransitionAtlas() {
       <section ref={heroRef} className="bg-[#6B21A8] px-6 py-8 lg:py-10 overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           {/* Graphic — behind text on mobile, beside text on desktop */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-20 lg:opacity-100 lg:relative lg:hidden pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-end opacity-20 lg:opacity-100 lg:relative lg:hidden pointer-events-none">
             <div className="w-64 sm:w-72"><HeroGraphic /></div>
           </div>
           <div className="flex items-center lg:justify-between">

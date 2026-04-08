@@ -29,7 +29,7 @@ CSV_PATH = Path(__file__).parent / "practices_master.csv"
 
 # ── Config ──
 SITEMAP_URL = "https://offshore-coalition.eu/oc_db_project-sitemap.xml"
-USER_AGENT = "Mozilla/5.0 (compatible; ETA-Scraper/1.0; +https://beston54.github.io/energy-transition-atlas/)"
+USER_AGENT = "Mozilla/5.0 (compatible; ETA-Scraper/1.0; +https://renewablesgridinitiative.github.io/energy-transition-atlas/)"
 REQUEST_DELAY = 1  # seconds between requests
 
 # ── CSV columns ──

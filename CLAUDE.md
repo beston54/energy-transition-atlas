@@ -4,8 +4,8 @@
 
 The **Energy Transition Atlas** is a mobile-first single-page web application displaying a searchable, filterable directory of 323 energy transition best practices. It is owned by the Global Initiative for Nature, Grids and Renewables (GINGR), a joint initiative of RGI and IUCN.
 
-**Live site:** https://beston54.github.io/energy-transition-atlas/
-**Repo:** https://github.com/beston54/energy-transition-atlas
+**Live site:** https://renewablesgridinitiative.github.io/energy-transition-atlas/
+**Repo:** https://github.com/RenewablesGridInitiative/energy-transition-atlas
 
 ## Architecture
 
