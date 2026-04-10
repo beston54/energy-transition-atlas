@@ -709,145 +709,228 @@ function HeroGraphic() {
       `}</style>
       <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" aria-hidden="true">
 
-        {/* Distant hills */}
-        <path d="M0,290 Q45,270 95,282 Q150,295 200,275 Q250,260 310,278 Q360,290 400,272" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.18" />
-
-        {/* Clouds */}
-        <g className="hero-cloud" opacity="0.28">
-          <path d="M52,58 Q58,42 72,44 Q78,32 92,38 Q102,30 112,40 Q120,36 124,46 Q132,44 130,56" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* ── Sun (top-right) ── */}
+        <g opacity="0.55">
+          <path d="M362,30 C370,27 378,34 375,42 C372,50 362,52 358,45 C354,38 356,32 362,30" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M366,18 Q367,10 365,3" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M380,26 Q386,20 392,15" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M382,40 Q390,42 396,40" fill="none" stroke="#FFF8E5" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="M376,52 Q382,58 386,64" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M356,54 Q350,62 346,68" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M348,30 Q340,26 334,22" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M354,17 Q348,9 344,3" fill="none" stroke="#FFF8E5" strokeWidth="1.4" strokeLinecap="round" />
         </g>
-        <g className="hero-cloud" opacity="0.2" style={{ animationDelay: "5s" }}>
-          <path d="M280,42 Q286,30 296,34 Q302,26 312,32 Q318,28 322,38 Q328,36 326,46" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* ── Clouds ── */}
+        <g className="hero-cloud" opacity="0.25">
+          <path d="M38,38 Q44,24 56,28 Q62,18 74,24 Q82,16 92,24 Q98,20 102,30 Q108,28 106,40" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
+        <g className="hero-cloud" opacity="0.18" style={{ animationDelay: "7s" }}>
+          <path d="M262,24 Q268,14 278,18 Q284,10 294,16 Q300,12 304,20 Q308,18 306,28" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </g>
 
-        {/* Left pylon — taller, foreground */}
+        {/* ── Rolling hills (background) ── */}
+        <path d="M0,292 Q45,278 95,285 Q150,296 200,280 Q250,268 310,282 Q360,292 400,278" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.15" />
+
+        {/* ── Globe (central, dominant) ── */}
         <g opacity="0.85">
-          {/* Legs */}
-          <path d="M78,320 Q80,230 84,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M108,320 Q106,232 102,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Cross braces */}
-          <path d="M82,180 Q93,177 104,180" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          <path d="M80,220 Q93,217 106,220" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          <path d="M79,260 Q93,257 107,260" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          {/* X braces */}
-          <path d="M82,180 Q94,200 106,220" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-          <path d="M104,180 Q92,200 80,220" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-          <path d="M80,220 Q94,240 107,260" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-          <path d="M106,220 Q92,240 79,260" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-          {/* Top piece */}
-          <path d="M84,145 Q93,138 102,145" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M93,138 Q92,128 93,120" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Arms */}
-          <path d="M62,142 Q72,138 84,145" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M102,145 Q114,138 124,142" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          {/* Insulators */}
-          <path d="M62,142 Q63,148 62,152" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M124,142 Q123,148 124,152" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Main circle — intentionally imperfect */}
+          <path d="M200,90 C237,88 270,104 286,136 C302,168 300,204 284,234 C268,262 240,276 200,278 C160,278 132,262 116,234 C100,204 98,168 114,136 C130,104 163,88 200,90" fill="none" stroke="#FFF8E5" strokeWidth="2.8" strokeLinecap="round" />
+          {/* Sketch echo */}
+          <path d="M202,92 C238,91 268,106 284,138 C300,170 298,202 282,232 C266,260 242,274 202,276" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
+          {/* Equator */}
+          <path d="M116,188 Q140,196 170,198 Q200,200 230,198 Q260,194 284,186" fill="none" stroke="#FFF8E5" strokeWidth="1.6" strokeLinecap="round" opacity="0.5" />
+          {/* Latitude lines */}
+          <path d="M132,152 Q162,160 200,162 Q238,160 268,152" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.35" />
+          <path d="M130,222 Q158,230 200,232 Q242,230 270,222" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.35" />
+          {/* Meridians */}
+          <path d="M200,90 Q208,135 210,188 Q208,240 200,278" fill="none" stroke="#FFF8E5" strokeWidth="1.4" strokeLinecap="round" opacity="0.45" />
+          <path d="M166,97 Q154,135 150,188 Q152,240 162,272" fill="none" stroke="#FFF8E5" strokeWidth="1.1" strokeLinecap="round" opacity="0.3" />
+          <path d="M236,98 Q248,136 252,188 Q250,240 240,272" fill="none" stroke="#FFF8E5" strokeWidth="1.1" strokeLinecap="round" opacity="0.3" />
+          {/* Abstract Europe/Africa continent */}
+          <path d="M192,124 Q198,120 206,124 Q212,132 216,144 Q220,156 218,168 Q216,178 210,182 Q217,186 222,194 Q228,206 226,220 Q224,234 217,244 Q212,250 204,252 Q198,248 192,238 Q186,226 184,212 Q182,200 186,188 Q180,182 178,174 Q176,160 180,148 Q184,134 192,124" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" opacity="0.55" />
+          {/* Abstract Americas */}
+          <path d="M150,132 Q156,128 162,132 Q166,140 164,150 Q160,158 152,160 Q157,166 160,176 Q162,190 158,204 Q154,216 147,222 Q142,218 140,208 Q138,192 142,176 Q137,170 136,160 Q136,148 142,138 Q146,132 150,132" fill="none" stroke="#FFF8E5" strokeWidth="1.6" strokeLinecap="round" opacity="0.4" />
         </g>
 
-        {/* Right pylon — shorter, background perspective */}
-        <g opacity="0.7">
-          {/* Legs */}
-          <path d="M298,322 Q300,252 302,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M322,322 Q320,254 318,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          {/* Cross braces */}
-          <path d="M300,225 Q310,222 320,225" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M299,260 Q310,257 321,260" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M298,295 Q310,292 322,295" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-          {/* X braces */}
-          <path d="M300,225 Q310,243 321,260" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
-          <path d="M320,225 Q310,243 299,260" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
-          {/* Top piece */}
-          <path d="M302,192 Q310,186 318,192" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M310,186 Q309,178 310,172" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-          {/* Arms */}
-          <path d="M286,190 Q294,186 302,192" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          <path d="M318,192 Q326,186 334,190" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          {/* Insulators */}
-          <path d="M286,190 Q287,195 286,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M334,190 Q333,195 334,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-        </g>
-
-        {/* Power lines — catenary curves between pylons */}
-        <path d="M62,152 Q180,215 286,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.55" />
-        <path d="M124,152 Q210,220 334,198" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-        <path d="M93,120 Q200,170 310,172" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" opacity="0.4" />
-
-        {/* Secondary bird — smaller, background */}
-        <g className="hero-bird-2" opacity="0.45">
-          <g transform="translate(270, 68)">
-            <path d="M-14,5 Q-6,-3 0,0 Q6,-3 14,5" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <circle cx="0" cy="1" r="1" fill="#FFF8E5" />
-          </g>
-        </g>
-
-        {/* Primary bird — larger, foreground */}
-        <g className="hero-bird" opacity="0.85">
-          <g transform="translate(195, 95)">
-            <path d="M-24,9 Q-12,-5 0,0 Q12,-5 24,9" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx="0" cy="1.5" r="1.8" fill="#FFF8E5" />
-          </g>
-        </g>
-
-        {/* Third bird — tiny, far away */}
-        <g className="hero-bird-2" opacity="0.3" style={{ animationDelay: "4s" }}>
-          <g transform="translate(155, 55)">
-            <path d="M-8,3 Q-4,-2 0,0 Q4,-2 8,3" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          </g>
-        </g>
-
-        {/* Walking people — three figures on the ground */}
+        {/* ── Wind turbine (left) ── */}
         <g opacity="0.8">
-          {/* Person 1 — front, larger, mid-stride */}
-          <g transform="translate(165, 295)">
-            <circle cx="0" cy="-18" r="5.5" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-            <path d="M0,-12.5 Q1,-4 0,4" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
-            <path d="M0,4 Q-5,14 -9,22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,4 Q6,14 10,22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,-6 Q-7,-2 -11,2" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,-6 Q8,0 12,4" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-          </g>
+          {/* Tower */}
+          <path d="M56,336 Q55,285 55,235 Q54,205 55,172" fill="none" stroke="#FFF8E5" strokeWidth="3" strokeLinecap="round" />
+          <path d="M58,335 Q57,288 57,238 Q56,208 57,177" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.25" />
+          {/* Nacelle */}
+          <path d="M48,172 Q50,167 55,166 Q60,167 62,172" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Hub */}
+          <circle cx="55" cy="170" r="3" fill="none" stroke="#FFF8E5" strokeWidth="2" />
+          {/* Blade 1 — up */}
+          <path d="M55,170 Q50,142 42,114" fill="none" stroke="#FFF8E5" strokeWidth="2.8" strokeLinecap="round" />
+          <path d="M42,114 Q44,111 48,114" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Blade 2 — lower-right */}
+          <path d="M55,170 Q74,188 88,200" fill="none" stroke="#FFF8E5" strokeWidth="2.8" strokeLinecap="round" />
+          <path d="M88,200 Q90,197 87,194" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Blade 3 — lower-left */}
+          <path d="M55,170 Q32,190 18,200" fill="none" stroke="#FFF8E5" strokeWidth="2.8" strokeLinecap="round" />
+          <path d="M18,200 Q16,198 19,195" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+        </g>
 
-          {/* Person 2 — slightly behind, walking */}
-          <g transform="translate(200, 300)">
-            <circle cx="0" cy="-15" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,-10.5 Q-1,-3 0,3" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
-            <path d="M0,3 Q-4,12 -7,18" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M0,3 Q5,12 8,18" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M0,-5 Q-6,0 -9,3" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-            <path d="M0,-5 Q5,-2 9,2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
-          </g>
+        {/* ── Electricity pylon (right, smaller/further) ── */}
+        <g opacity="0.7">
+          <path d="M332,340 Q334,280 336,224" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M360,340 Q358,282 356,224" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Cross braces */}
+          <path d="M334,255 Q346,252 358,255" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M333,285 Q346,282 359,285" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M332,315 Q346,312 360,315" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* X braces */}
+          <path d="M334,255 Q346,270 359,285" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+          <path d="M358,255 Q346,270 333,285" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+          {/* Top piece */}
+          <path d="M336,224 Q346,218 356,224" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M346,218 Q345,208 346,200" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+          {/* Arms */}
+          <path d="M320,222 Q328,218 336,224" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M356,224 Q364,218 372,222" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          {/* Insulators */}
+          <path d="M320,222 Q321,227 320,230" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M372,222 Q371,227 372,230" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Lightning bolt */}
+          <path d="M364,192 L358,202 L362,202 L356,214" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+        </g>
 
-          {/* Person 3 — smaller, further back */}
-          <g transform="translate(232, 306)" opacity="0.65">
-            <circle cx="0" cy="-12" r="3.5" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+        {/* ── Power lines (turbine to pylon) ── */}
+        <g opacity="0.45">
+          <path d="M62,172 Q180,235 320,230" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M55,166 Q175,222 346,200" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          <path d="M48,172 Q180,242 372,230" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+        </g>
+
+        {/* ── Solar panels (bottom-right) ── */}
+        <g opacity="0.65">
+          <path d="M292,316 L312,300 L332,300 L312,316 Z" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M302,308 L322,300" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+          <path d="M297,312 Q312,304 327,300" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+          <path d="M308,326 L328,310 L348,310 L328,326 Z" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M318,318 L338,310" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+          {/* Supports */}
+          <path d="M310,324 Q312,330 310,338" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M326,324 Q328,330 326,338" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        </g>
+
+        {/* ── Houses (bottom-left) ── */}
+        <g opacity="0.72">
+          {/* House 1 — larger, front */}
+          <path d="M18,338 L18,312 L28,298 L38,312 L38,338" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M23,318 L23,324 L30,324 L30,318 Z" fill="none" stroke="#FFF8E5" strokeWidth="1.4" strokeLinecap="round" opacity="0.6" />
+          <path d="M34,338 L34,326 Q36,324 38,326" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+          {/* House 2 — medium, with solar on roof */}
+          <path d="M48,342 L48,316 L60,302 L72,316 L72,342" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M51,310 L58,303 L66,310" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+          <path d="M54,307 L63,307" fill="none" stroke="#FFF8E5" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
+          <path d="M54,322 L54,328 L62,328 L62,322" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" opacity="0.55" />
+          {/* House 3 — smaller, behind */}
+          <path d="M80,344 L80,322 L88,312 L96,322 L96,344" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+        </g>
+
+        {/* ── Trees ── */}
+        <g opacity="0.55">
+          {/* Tree 1 — near houses */}
+          <path d="M110,344 Q110,332 110,318" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          <path d="M110,318 Q100,314 96,304 Q100,296 108,294 Q112,290 118,294 Q124,296 126,304 Q122,314 110,318" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Tree 2 — smaller */}
+          <path d="M128,346 Q128,336 128,328" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M128,328 Q120,324 118,318 Q122,312 128,310 Q134,312 138,318 Q136,324 128,328" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Tree 3 — near solar */}
+          <path d="M280,346 Q280,334 280,324" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M280,324 Q272,320 270,312 Q274,304 280,302 Q286,304 290,312 Q288,320 280,324" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+        </g>
+
+        {/* ── People (bottom-center, collaboration poses) ── */}
+        <g opacity="0.8">
+          {/* Person 1 — center, arms up (celebrating) */}
+          <g transform="translate(180, 312)">
+            <circle cx="0" cy="-20" r="5.5" fill="none" stroke="#FFF8E5" strokeWidth="2.2" />
+            <path d="M0,-14 Q1,-6 0,2" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M0,2 Q-5,12 -8,20" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,2 Q5,12 8,20" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,-8 Q-8,-16 -14,-22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,-8 Q8,-16 14,-22" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+          </g>
+          {/* Person 2 — left, reaching right */}
+          <g transform="translate(152, 318)">
+            <circle cx="0" cy="-16" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" />
+            <path d="M0,-11 Q0,-4 0,2" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,2 Q-4,10 -6,16" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,2 Q4,10 6,16" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-6 Q8,-4 15,-2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-6 Q-6,0 -10,3" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          </g>
+          {/* Person 3 — right, reaching left */}
+          <g transform="translate(212, 316)">
+            <circle cx="0" cy="-16" r="4.5" fill="none" stroke="#FFF8E5" strokeWidth="2" />
+            <path d="M0,-11 Q-1,-4 0,2" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M0,2 Q-4,10 -7,16" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,2 Q5,10 8,16" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-6 Q-8,-4 -16,-2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M0,-6 Q6,0 10,3" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
+          </g>
+          {/* Person 4 — far right, pointing at globe */}
+          <g transform="translate(242, 322)" opacity="0.6">
+            <circle cx="0" cy="-12" r="3.5" fill="none" stroke="#FFF8E5" strokeWidth="1.8" />
             <path d="M0,-8.5 Q0,-3 0,2" fill="none" stroke="#FFF8E5" strokeWidth="1.8" strokeLinecap="round" />
             <path d="M0,2 Q-3,9 -5,14" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M0,2 Q4,9 6,14" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M0,-3 Q-4,0 -7,2" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M0,-3 Q5,-1 7,1" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M0,-4 Q6,-10 12,-16" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
           </g>
         </g>
 
-        {/* Ground line — wobbly horizon */}
-        <path d="M0,324 Q30,319 65,322 Q100,326 140,320 Q180,316 220,322 Q260,327 300,320 Q340,315 370,322 Q390,326 400,321" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" opacity="0.6" />
-        <path d="M0,332 Q40,328 80,330 Q130,334 180,328 Q230,324 280,330 Q330,335 380,328 Q395,326 400,329" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.25" />
+        {/* ── Birds (animated) ── */}
+        <g className="hero-bird" opacity="0.85">
+          <g transform="translate(168, 72)">
+            <path d="M-22,8 Q-10,-4 0,0 Q10,-4 22,8" fill="none" stroke="#FFF8E5" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="0" cy="1.5" r="1.5" fill="#FFF8E5" />
+          </g>
+        </g>
+        <g className="hero-bird-2" opacity="0.5">
+          <g transform="translate(292, 58)">
+            <path d="M-14,5 Q-7,-3 0,0 Q7,-3 14,5" fill="none" stroke="#FFF8E5" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="0" cy="1" r="1" fill="#FFF8E5" />
+          </g>
+        </g>
+        <g className="hero-bird" opacity="0.3" style={{ animationDelay: "3s" }}>
+          <g transform="translate(128, 48)">
+            <path d="M-8,3 Q-4,-2 0,0 Q4,-2 8,3" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+        </g>
+        <g className="hero-bird-2" opacity="0.22" style={{ animationDelay: "5s" }}>
+          <g transform="translate(220, 42)">
+            <path d="M-6,2 Q-3,-1 0,0 Q3,-1 6,2" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
+          </g>
+        </g>
 
-        {/* Grass tufts */}
-        <g opacity="0.4">
-          <path d="M30,322 Q28,312 32,306" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M33,321 Q36,313 34,305" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M36,322 Q40,314 38,308" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+        {/* ── Ground (wobbly horizon) ── */}
+        <path d="M0,348 Q25,342 55,346 Q90,350 130,344 Q170,338 210,344 Q250,350 290,342 Q330,336 360,344 Q385,348 400,342" fill="none" stroke="#FFF8E5" strokeWidth="2.2" strokeLinecap="round" opacity="0.5" />
+        <path d="M0,356 Q40,352 80,354 Q130,358 180,352 Q230,348 280,354 Q330,358 380,352 Q395,350 400,353" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" opacity="0.2" />
 
-          <path d="M140,319 Q138,311 141,305" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M143,318 Q146,312 144,306" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+        {/* ── Grass tufts ── */}
+        <g opacity="0.35">
+          <path d="M140,343 Q138,333 141,326" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M144,342 Q147,334 145,328" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+          <path d="M252,348 Q250,340 253,334" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M256,347 Q258,340 256,334" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+          <path d="M370,344 Q368,336 371,330" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M374,343 Q376,336 374,330" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+        </g>
 
-          <path d="M260,324 Q258,316 261,310" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M264,323 Q267,316 264,310" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
-          <path d="M267,324 Q270,317 268,312" fill="none" stroke="#FFF8E5" strokeWidth="1.2" strokeLinecap="round" />
-
-          <path d="M350,320 Q348,312 351,307" fill="none" stroke="#FFF8E5" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M354,319 Q356,312 353,306" fill="none" stroke="#FFF8E5" strokeWidth="1.3" strokeLinecap="round" />
+        {/* ── Pencil-texture specks ── */}
+        <g opacity="0.12">
+          <circle cx="95" cy="108" r="1" fill="#FFF8E5" />
+          <circle cx="312" cy="140" r="0.8" fill="#FFF8E5" />
+          <circle cx="180" cy="270" r="1" fill="#FFF8E5" />
+          <circle cx="258" cy="290" r="0.8" fill="#FFF8E5" />
+          <circle cx="348" cy="168" r="1" fill="#FFF8E5" />
+          <circle cx="42" cy="255" r="0.8" fill="#FFF8E5" />
+          <circle cx="160" cy="115" r="0.7" fill="#FFF8E5" />
+          <circle cx="290" cy="260" r="0.9" fill="#FFF8E5" />
         </g>
       </svg>
     </div>
@@ -1548,8 +1631,9 @@ export default function EnergyTransitionAtlas() {
                 "The Energy Transition Atlas is a shared platform that brings together proven best practices from across the energy transition. It serves as a navigator and search hub, providing a single access point for practices contributed by multiple organisations and initiatives.",
                 "Rather than hosting full content, the Atlas links out to the source websites of each practice, keeping content management decentralised while offering unified discovery, filtering, and search.",
                 'The Atlas is owned and managed by the <a href="https://gingr.org" target="_blank" rel="noopener noreferrer">Global Initiative for Nature, Grids and Renewables (GINGR)</a>, a joint initiative of the Renewables Grid Initiative (RGI) and the International Union for Conservation of Nature (IUCN).',
+                'The Atlas is built in the open. Its codebase, data, and full contribution history are publicly available on <a href="https://github.com/RenewablesGridInitiative/energy-transition-atlas" target="_blank" rel="noopener noreferrer">GitHub</a>, reflecting the same commitment to transparency that we champion in the energy transition itself.',
               ]).map((text, i) => (
-                <p key={i} className={i === 2 ? "text-[#424244] [&_a]:text-[#6B21A8] [&_a]:underline [&_a:hover]:text-[#6B21A8]/80 [&_strong]:font-bold" : ""}
+                <p key={i} className="text-[#424244] [&_a]:text-[#6B21A8] [&_a]:underline [&_a:hover]:text-[#6B21A8]/80 [&_strong]:font-bold"
                   dangerouslySetInnerHTML={{ __html: text }} />
               ))}
               <h3 className="font-['League_Gothic'] text-[#6B21A8] text-2xl uppercase tracking-wide mt-8 scroll-mt-24" id="about-vision">Our Vision</h3>
@@ -2089,17 +2173,28 @@ export default function EnergyTransitionAtlas() {
       {/* ─── 7. Footer ─── */}
       <footer className="bg-[#424244] px-6 py-10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-10">
             {/* Col 1: Logos + tagline */}
             <div>
               <div className="flex flex-nowrap items-center gap-4">
                 <GreyscaleGINGRLogo />
               </div>
               <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed">
-                The Energy Transition Atlas is managed by GINGR, a joint initiative of RGI and IUCN. It collects proven practices from a growing network of partners and makes them easy to find and share.
+                The Energy Transition Atlas is managed by GINGR &ndash; Global Initiative for Nature, Grids and Renewables, a joint initiative of RGI and IUCN. It collects proven practices from a growing network of partners and makes them easy to find and share.
               </p>
             </div>
-            {/* Col 2: Contact */}
+            {/* Col 2: Links */}
+            <div>
+              <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Links</h4>
+              <ul className="space-y-2">
+                <li><a href="#about" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">About</a></li>
+                <li><a href="#submit" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Submit a Practice</a></li>
+                <li><a href="#contact" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Contact</a></li>
+                <li><a href="https://github.com/RenewablesGridInitiative/energy-transition-atlas" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">GitHub</a></li>
+                <li><a href="https://renewables-grid.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Imprint &amp; Privacy Policy</a></li>
+              </ul>
+            </div>
+            {/* Col 3: Contact */}
             <div>
               <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Contact</h4>
               <p className="text-[#C9C9C9] text-sm leading-relaxed">
@@ -2114,21 +2209,11 @@ export default function EnergyTransitionAtlas() {
                 </a>
               </p>
             </div>
-            {/* Col 3: Links */}
-            <div>
-              <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Links</h4>
-              <ul className="space-y-2">
-                <li><a href="#about" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">About</a></li>
-                <li><a href="#submit" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Submit a Practice</a></li>
-                <li><a href="#contact" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Contact</a></li>
-                <li><a href="https://renewables-grid.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Imprint &amp; Privacy Policy</a></li>
-              </ul>
-            </div>
           </div>
           {/* Bottom bar */}
           <div className="mt-8 pt-6 border-t border-[#C9C9C9]/30 text-center">
             <p className="text-[#C9C9C9] text-xs">
-              &copy; 2026 GINGR (Global Initiative for Nature, Grids and Renewables)
+              &copy; 2026 GINGR &ndash; Global Initiative for Nature, Grids and Renewables
             </p>
           </div>
         </div>

@@ -3,7 +3,8 @@
     "intro": [
       "The Energy Transition Atlas is a shared platform that brings together proven best practices from across the energy transition. It serves as a navigator and search hub, providing a single access point for practices contributed by multiple organisations and initiatives.",
       "Rather than hosting full content, the Atlas links out to the source websites of each practice, keeping content management decentralised while offering unified discovery, filtering, and search.",
-      "The Atlas is owned and managed by the <a href=\"https://gingr.org\" target=\"_blank\" rel=\"noopener noreferrer\">Global Initiative for Nature, Grids and Renewables (GINGR)</a>, a joint initiative of the Renewables Grid Initiative (RGI) and the International Union for Conservation of Nature (IUCN)."
+      "The Atlas is owned and managed by the <a href=\"https://gingr.org\" target=\"_blank\" rel=\"noopener noreferrer\">Global Initiative for Nature, Grids and Renewables (GINGR)</a>, a joint initiative of the Renewables Grid Initiative (RGI) and the International Union for Conservation of Nature (IUCN).",
+      "The Atlas is built in the open. Its codebase, data, and full contribution history are publicly available on <a href=\"https://github.com/RenewablesGridInitiative/energy-transition-atlas\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub</a>, reflecting the same commitment to transparency that we champion in the energy transition itself."
     ],
     "vision": "A decarbonised world powered by clean energy, where the shift to renewables strengthens communities, restores nature, and leaves no one behind.",
     "mission": "The Energy Transition Atlas brings together a growing network of partners who document and share what works in renewable energy and grid development. By collecting these practices in one searchable platform, we help practitioners, policymakers, and communities put proven approaches to work.",
