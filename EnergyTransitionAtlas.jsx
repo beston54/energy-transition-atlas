@@ -2177,17 +2177,17 @@ export default function EnergyTransitionAtlas() {
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-10">
             {/* Col 1: Logos + tagline */}
             <div>
-              <div className="flex flex-nowrap items-center gap-5">
-                <img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[28px] w-auto opacity-80" />
-                <img src="gingr-logo-grey.svg" alt="GINGR (Global Initiative for Nature, Grids and Renewables)" className="h-[28px] w-auto opacity-80" />
-                <img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[28px] w-auto opacity-80" />
+              <div className="flex flex-nowrap items-center gap-6">
+                <a href={BRAND_LINKS.RGI} target="_blank" rel="noopener noreferrer"><img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[40px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
+                <a href={BRAND_LINKS.GINGR} target="_blank" rel="noopener noreferrer"><img src="gingr-logo-grey.svg" alt="GINGR (Global Initiative for Nature, Grids and Renewables)" className="h-[40px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
+                <a href={BRAND_LINKS.IUCN} target="_blank" rel="noopener noreferrer"><img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[40px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
               </div>
-              <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed">
+              <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed max-w-fit">
                 The Energy Transition Atlas is a joint project of the Renewables Grid Initiative (RGI), the International Union for Conservation of Nature (IUCN), and their shared initiative GINGR &ndash; the Global Initiative for Nature, Grids and Renewables.
               </p>
             </div>
-            {/* Col 2: Contact (centered) */}
-            <div className="md:text-center">
+            {/* Col 2: Contact (right-aligned) */}
+            <div className="md:text-right">
               <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Contact</h4>
               <p className="text-[#C9C9C9] text-sm leading-relaxed">
                 {contactConfig?.orgName || "GINGR Secretariat"}<br />
