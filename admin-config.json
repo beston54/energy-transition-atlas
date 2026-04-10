@@ -28,7 +28,7 @@
         "RGI's Good Practice Database has documented best practices in grid development and renewable energy since 2010, contributing the largest share of practices covering stakeholder engagement, nature protection, technology innovation, and spatial planning across Europe.",
         "IUCN's PANORAMA platform contributes nature-based and community-focused solutions relevant to the energy transition, drawn from a global repository of conservation and sustainable development approaches.",
         "OCEaN brings enhancement and restoration projects from the offshore wind sector, showing how offshore energy and marine conservation can work together.",
-        "Safe Lines for Birds (SL4B) contributes bird protection practices from the LIFE SafeLines4Birds project, documenting real-world solutions for making power line infrastructure safer for birds across Europe."
+        "SafeLines4Birds contributes bird protection practices from the LIFE SafeLines4Birds project, documenting real-world solutions for making power line infrastructure safer for birds across Europe."
       ],
       "cta": "The collection keeps growing. New partners and practices are added on a rolling basis. If your organisation documents energy transition practices, we'd love to hear from you."
     },
@@ -52,10 +52,10 @@
       { "title": "Joint approval by RGI and IUCN", "desc": "All submissions are reviewed by the Renewables Grid Initiative (RGI) and the International Union for Conservation of Nature (IUCN). Both organisations must approve a practice before it is published in the Atlas.", "highlight": true }
     ],
     "pathways": [
-      { "name": "IUCN PANORAMA", "url": "https://panorama.solutions/en", "desc": "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Submit energy-relevant practices directly through the Panorama platform. Practices are reviewed for conservation relevance and documented outcomes.", "color": "border-l-emerald-500" },
+      { "name": "RGI Grid Awards", "url": "https://renewables-grid.eu/award/", "desc": "The RGI Grid Awards recognise outstanding Good Practices of the Year with the Golden Pylon trophy. Winners are selected in three categories: Technological Innovation & System Integration, Communication & Engagement, and Environmental Protection. Award-winning practices are featured in the Atlas.", "color": "border-l-amber-500" },
       { "name": "OCEaN", "url": "https://offshore-coalition.eu", "desc": "The Offshore Coalition for Energy and Nature focuses on enhancement and restoration projects in the offshore wind sector, demonstrating how offshore energy and marine conservation can work together. Contact OCEaN to feature your offshore practice.", "color": "border-l-sky-500" },
-      { "name": "Safe Lines for Birds (SL4B)", "url": "https://safelines4birds.eu", "desc": "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping. Contact SL4B to feature your bird protection practice.", "color": "border-l-orange-500" },
-      { "name": "RGI Grid Awards", "url": "https://renewables-grid.eu/award/", "desc": "The RGI Grid Awards recognise outstanding Good Practices of the Year with the Golden Pylon trophy. Winners are selected in three categories: Technological Innovation & System Integration, Communication & Engagement, and Environmental Protection. Award-winning practices are featured in the Atlas.", "color": "border-l-amber-500" }
+      { "name": "SafeLines4Birds", "url": "https://safelines4birds.eu", "desc": "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping. Contact SafeLines4Birds to feature your bird protection practice.", "color": "border-l-orange-500" },
+      { "name": "IUCN PANORAMA", "url": "https://panorama.solutions/en", "desc": "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Submit energy-relevant practices directly through the Panorama platform. Practices are reviewed for conservation relevance and documented outcomes.", "color": "border-l-emerald-500" }
     ]
   },
   "partners": [

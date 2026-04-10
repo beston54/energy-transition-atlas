@@ -1668,7 +1668,7 @@ export default function EnergyTransitionAtlas() {
                   "RGI's Good Practice Database has documented best practices in grid development and renewable energy since 2010, contributing the largest share of practices covering stakeholder engagement, nature protection, technology innovation, and spatial planning across Europe.",
                   "IUCN's PANORAMA platform contributes nature-based and community-focused solutions relevant to the energy transition, drawn from a global repository of conservation and sustainable development approaches.",
                   "OCEaN brings enhancement and restoration projects from the offshore wind sector, showing how offshore energy and marine conservation can work together.",
-                  "Safe Lines for Birds (SL4B) contributes bird protection practices from the LIFE SafeLines4Birds project, documenting real-world solutions for making power line infrastructure safer for birds across Europe.",
+                  "SafeLines4Birds contributes bird protection practices from the LIFE SafeLines4Birds project, documenting real-world solutions for making power line infrastructure safer for birds across Europe.",
                 ]).map((src, i) => (
                   <li key={i} dangerouslySetInnerHTML={{ __html: src }} />
                 ))}
@@ -1764,10 +1764,10 @@ export default function EnergyTransitionAtlas() {
             <p className="text-[#424244] text-sm leading-relaxed mb-6">Each Atlas Partner maintains its own submission process. Choose the platform that best fits your practice:</p>
             <div className="grid sm:grid-cols-2 gap-5 mb-10">
               {(submitConfig?.pathways || [
-                { name: "IUCN PANORAMA", url: BRAND_LINKS.Panorama, desc: "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Submit energy-relevant practices directly through the Panorama platform. Practices are reviewed for conservation relevance and documented outcomes.", color: "border-l-emerald-500" },
-                { name: "OCEaN", url: BRAND_LINKS.OCEaN, desc: "The Offshore Coalition for Energy and Nature focuses on enhancement and restoration projects in the offshore wind sector, demonstrating how offshore energy and marine conservation can work together. Contact OCEaN to feature your offshore practice.", color: "border-l-sky-500" },
-                { name: "Safe Lines for Birds (SL4B)", url: BRAND_LINKS.SL4B, desc: "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping. Contact SL4B to feature your bird protection practice.", color: "border-l-orange-500" },
                 { name: "RGI Grid Awards", url: "https://renewables-grid.eu/award/", desc: "The RGI Grid Awards recognise outstanding Good Practices of the Year with the Golden Pylon trophy. Winners are selected in three categories: Technological Innovation & System Integration, Communication & Engagement, and Environmental Protection. Award-winning practices are featured in the Atlas.", color: "border-l-amber-500" },
+                { name: "OCEaN", url: BRAND_LINKS.OCEaN, desc: "The Offshore Coalition for Energy and Nature focuses on enhancement and restoration projects in the offshore wind sector, demonstrating how offshore energy and marine conservation can work together. Contact OCEaN to feature your offshore practice.", color: "border-l-sky-500" },
+                { name: "SafeLines4Birds", url: BRAND_LINKS.SL4B, desc: "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping. Contact SafeLines4Birds to feature your bird protection practice.", color: "border-l-orange-500" },
+                { name: "IUCN PANORAMA", url: BRAND_LINKS.Panorama, desc: "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Submit energy-relevant practices directly through the Panorama platform. Practices are reviewed for conservation relevance and documented outcomes.", color: "border-l-emerald-500" },
               ]).map((partner) => (
                 <a
                   key={partner.name}
@@ -2178,27 +2178,16 @@ export default function EnergyTransitionAtlas() {
             {/* Col 1: Logos + tagline */}
             <div>
               <div className="flex flex-nowrap items-center gap-5">
-                <img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[36px] w-auto opacity-80" />
-                <GreyscaleGINGRLogo />
-                <img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[36px] w-auto opacity-80" />
+                <img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[28px] w-auto opacity-80" />
+                <img src="gingr-logo-grey.svg" alt="GINGR (Global Initiative for Nature, Grids and Renewables)" className="h-[28px] w-auto opacity-80" />
+                <img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[28px] w-auto opacity-80" />
               </div>
               <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed">
                 The Energy Transition Atlas is a joint project of the Renewables Grid Initiative (RGI), the International Union for Conservation of Nature (IUCN), and their shared initiative GINGR &ndash; the Global Initiative for Nature, Grids and Renewables.
               </p>
             </div>
-            {/* Col 2: Links */}
-            <div>
-              <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Links</h4>
-              <ul className="space-y-2">
-                <li><a href="#about" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">About</a></li>
-                <li><a href="#submit" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Submit a Practice</a></li>
-                <li><a href="#contact" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Contact</a></li>
-                <li><a href="https://github.com/RenewablesGridInitiative/energy-transition-atlas" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">GitHub</a></li>
-                <li><a href="https://renewables-grid.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Imprint &amp; Privacy Policy</a></li>
-              </ul>
-            </div>
-            {/* Col 3: Contact */}
-            <div>
+            {/* Col 2: Contact (centered) */}
+            <div className="md:text-center">
               <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Contact</h4>
               <p className="text-[#C9C9C9] text-sm leading-relaxed">
                 {contactConfig?.orgName || "GINGR Secretariat"}<br />
@@ -2211,6 +2200,17 @@ export default function EnergyTransitionAtlas() {
                   {contactConfig?.email || "info@gingr.org"}
                 </a>
               </p>
+            </div>
+            {/* Col 3: Links */}
+            <div>
+              <h4 className="font-['League_Gothic'] text-[#FFF8E5] text-xl uppercase tracking-widest mb-3">Links</h4>
+              <ul className="space-y-2">
+                <li><a href="#about" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">About</a></li>
+                <li><a href="#submit" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Submit a Practice</a></li>
+                <li><a href="#contact" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Contact</a></li>
+                <li><a href="https://github.com/RenewablesGridInitiative/energy-transition-atlas" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">GitHub</a></li>
+                <li><a href="https://renewables-grid.eu/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-sm hover:text-white transition-colors">Imprint &amp; Privacy Policy</a></li>
+              </ul>
             </div>
           </div>
           {/* Bottom bar */}
