@@ -123,6 +123,12 @@
 
           <form id="about-form" class="hidden space-y-6" onsubmit="event.preventDefault(); saveSection('about');">
             <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Intro Paragraphs</label>
+              <p class="text-xs text-[#6B6B6D] mb-2">The opening paragraphs at the top of the About page. HTML links (&lt;a href="..."&gt;) are supported.</p>
+              <div class="space-y-3" id="about-intro-fields"></div>
+              <button type="button" onclick="addAboutIntro()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add paragraph</button>
+            </div>
+            <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Vision Statement</label>
               <textarea id="about-vision" rows="3" class="w-full px-4 py-3 rounded-xl border border-[#C9C9C9] bg-white text-sm text-[#424244] focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20"></textarea>
             </div>
@@ -138,6 +144,12 @@
             <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Collection Intro</label>
               <textarea id="about-collection-intro" rows="2" class="w-full px-4 py-3 rounded-xl border border-[#C9C9C9] bg-white text-sm text-[#424244] focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Collection Sources (bullets)</label>
+              <p class="text-xs text-[#6B6B6D] mb-2">Each entry becomes a bullet in the "How Practices Are Collected" list. HTML is supported (use &lt;strong&gt;...&lt;/strong&gt; for bold lead-ins).</p>
+              <div class="space-y-3" id="about-sources-fields"></div>
+              <button type="button" onclick="addAboutSource()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add source</button>
             </div>
             <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Collection CTA</label>
@@ -198,26 +210,21 @@
       <div id="panel-submit" class="hidden">
         <div class="bg-white rounded-xl border border-[#C9C9C9] p-6">
           <h2 class="font-bold text-[#6B21A8] text-xl mb-2">Edit Submit a Practice Page</h2>
-          <p class="text-[#424244] text-sm mb-6">Edit the submission criteria and partner pathway cards.</p>
+          <p class="text-[#424244] text-sm mb-6">Edit the overview paragraphs and partner pathway cards shown on the Submit a Practice page.</p>
 
           <div id="submit-loading" class="text-[#6B6B6D] text-sm py-8 text-center">Loading current content...</div>
 
           <form id="submit-form" class="hidden space-y-6" onsubmit="event.preventDefault(); saveSection('submit');">
             <div>
-              <label class="block text-sm font-medium text-[#424244] mb-1">Intro Text</label>
-              <textarea id="submit-introText" rows="3" class="w-full px-4 py-3 rounded-xl border border-[#C9C9C9] bg-white text-sm text-[#424244] focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20"></textarea>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-[#424244] mb-1">Submission Criteria</label>
-              <p class="text-xs text-[#6B6B6D] mb-2">Edit the list of criteria. Check "Highlight" to visually emphasise a criterion.</p>
-              <div class="space-y-3" id="criteria-fields"></div>
-              <button type="button" onclick="addCriterion()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add criterion</button>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Overview Paragraphs</label>
+              <p class="text-xs text-[#6B6B6D] mb-2">Each paragraph is rendered as a separate block on the Submit a Practice page.</p>
+              <div class="space-y-3" id="submit-overview-fields"></div>
+              <button type="button" onclick="addOverviewParagraph()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add paragraph</button>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Partner Pathways</label>
-              <p class="text-xs text-[#6B6B6D] mb-2">Edit the partner pathway cards shown below the criteria.</p>
+              <p class="text-xs text-[#6B6B6D] mb-2">Edit the partner pathway cards shown below the overview.</p>
               <div class="space-y-4" id="pathway-fields"></div>
               <button type="button" onclick="addPathway()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add pathway</button>
             </div>
@@ -397,8 +404,48 @@
           </div>`;
       });
 
+      // Intro paragraphs (array of strings, may contain HTML)
+      const introContainer = document.getElementById("about-intro-fields");
+      introContainer.innerHTML = "";
+      (about.intro || []).forEach((text) => renderAboutIntro(introContainer, text));
+
+      // Collection sources bullets (array of strings, may contain HTML)
+      const sourcesContainer = document.getElementById("about-sources-fields");
+      sourcesContainer.innerHTML = "";
+      (about.collection?.sources || []).forEach((text) => renderAboutSource(sourcesContainer, text));
+
       document.getElementById("about-loading").classList.add("hidden");
       document.getElementById("about-form").classList.remove("hidden");
+    }
+
+    function renderAboutIntro(container, text) {
+      const div = document.createElement("div");
+      div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
+      div.innerHTML = `
+        <div class="flex justify-end">
+          <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
+        </div>
+        <textarea class="about-intro-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="4">${escHtml(text)}</textarea>`;
+      container.appendChild(div);
+    }
+
+    function addAboutIntro() {
+      renderAboutIntro(document.getElementById("about-intro-fields"), "");
+    }
+
+    function renderAboutSource(container, text) {
+      const div = document.createElement("div");
+      div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
+      div.innerHTML = `
+        <div class="flex justify-end">
+          <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
+        </div>
+        <textarea class="about-source-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="3">${escHtml(text)}</textarea>`;
+      container.appendChild(div);
+    }
+
+    function addAboutSource() {
+      renderAboutSource(document.getElementById("about-sources-fields"), "");
     }
 
     // ── Contact Form ──
@@ -416,12 +463,13 @@
     // ── Submit Form ──
     function populateSubmitForm() {
       const s = configData.submit || {};
-      document.getElementById("submit-introText").value = s.introText || "";
 
-      const criteriaContainer = document.getElementById("criteria-fields");
-      criteriaContainer.innerHTML = "";
-      (s.criteria || []).forEach((c, i) => renderCriterion(criteriaContainer, c, i));
+      // Overview paragraphs (array of strings)
+      const overviewContainer = document.getElementById("submit-overview-fields");
+      overviewContainer.innerHTML = "";
+      (s.overview || []).forEach((text) => renderOverviewParagraph(overviewContainer, text));
 
+      // Partner pathways (array of objects)
       const pathwayContainer = document.getElementById("pathway-fields");
       pathwayContainer.innerHTML = "";
       (s.pathways || []).forEach((p, i) => renderPathway(pathwayContainer, p, i));
@@ -430,25 +478,19 @@
       document.getElementById("submit-form").classList.remove("hidden");
     }
 
-    function renderCriterion(container, c, i) {
+    function renderOverviewParagraph(container, text) {
       const div = document.createElement("div");
       div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
       div.innerHTML = `
-        <div class="flex items-center gap-2">
-          <input id="crit-title-${i}" value="${escHtml(c.title)}" placeholder="Title" class="flex-1 px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm font-medium" />
-          <label class="flex items-center gap-1 text-xs text-[#6B6B6D]">
-            <input type="checkbox" id="crit-hl-${i}" ${c.highlight ? "checked" : ""} class="accent-[#6B21A8]" /> Highlight
-          </label>
+        <div class="flex justify-end">
           <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
         </div>
-        <textarea id="crit-desc-${i}" rows="2" placeholder="Description" class="w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm">${escHtml(c.desc)}</textarea>`;
+        <textarea class="submit-overview-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="5">${escHtml(text)}</textarea>`;
       container.appendChild(div);
     }
 
-    function addCriterion() {
-      const container = document.getElementById("criteria-fields");
-      const i = container.children.length;
-      renderCriterion(container, { title: "", desc: "", highlight: false }, i);
+    function addOverviewParagraph() {
+      renderOverviewParagraph(document.getElementById("submit-overview-fields"), "");
     }
 
     function renderPathway(container, p, i) {
@@ -590,10 +632,25 @@
           values.push({ title: document.getElementById(`val-title-${i}`).value, text: document.getElementById(`val-text-${i}`).value });
           i++;
         }
+        // Intro paragraphs (preserves any HTML the admin typed)
+        const introParas = [];
+        document.querySelectorAll("#about-intro-fields .about-intro-text").forEach((ta) => {
+          const v = ta.value;
+          if (v.trim()) introParas.push(v);
+        });
+        // Collection sources bullets
+        const sources = [];
+        document.querySelectorAll("#about-sources-fields .about-source-text").forEach((ta) => {
+          const v = ta.value;
+          if (v.trim()) sources.push(v);
+        });
+        configData.about.intro = introParas;
         configData.about.vision = document.getElementById("about-vision").value;
         configData.about.mission = document.getElementById("about-mission").value;
         configData.about.values = values;
+        if (!configData.about.collection) configData.about.collection = {};
         configData.about.collection.intro = document.getElementById("about-collection-intro").value;
+        configData.about.collection.sources = sources;
         configData.about.collection.cta = document.getElementById("about-collection-cta").value;
         configData.about.partnerCTA = document.getElementById("about-partner-cta").value;
       }
@@ -608,12 +665,10 @@
       }
 
       else if (section === "submit") {
-        const criteria = [];
-        document.querySelectorAll("#criteria-fields > div").forEach((div, i) => {
-          const titleEl = div.querySelector(`[id^="crit-title-"]`);
-          const descEl = div.querySelector(`[id^="crit-desc-"]`);
-          const hlEl = div.querySelector(`[id^="crit-hl-"]`);
-          if (titleEl) criteria.push({ title: titleEl.value, desc: descEl?.value || "", highlight: hlEl?.checked || false });
+        const overview = [];
+        document.querySelectorAll("#submit-overview-fields .submit-overview-text").forEach((ta) => {
+          const v = ta.value;
+          if (v.trim()) overview.push(v);
         });
 
         const pathways = [];
@@ -625,9 +680,12 @@
           if (nameEl) pathways.push({ name: nameEl.value, url: urlEl?.value || "", desc: descEl?.value || "", color: colorEl?.value || "" });
         });
 
+        // Preserve any orphaned fields (introText, criteria) so we don't delete
+        // data the admin can no longer see but might still want in the JSON.
+        const existing = configData.submit || {};
         configData.submit = {
-          introText: document.getElementById("submit-introText").value,
-          criteria,
+          ...existing,
+          overview,
           pathways,
         };
       }
