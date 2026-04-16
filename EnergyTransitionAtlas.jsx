@@ -1446,7 +1446,7 @@ export default function EnergyTransitionAtlas() {
             { name: "IUCN", url: BRAND_LINKS.IUCN, logo: "logos/iucn.png" },
           ]).map(b => {
             // Optical sizing: GINGR is wider, IUCN has more internal padding — match footer visual weight
-            const heightClass = b.name === "IUCN" ? "h-[34px]" : b.name === "GINGR" ? "h-[32px]" : "h-[26px]";
+            const heightClass = b.name === "IUCN" ? "h-[34px]" : b.name === "GINGR" ? "h-[34px]" : "h-[26px]";
             const logoVer = brandBarConfig?.logoVersion || 1;
             return b.logo ? (
               <a key={b.name} href={b.url} target="_blank" rel="noopener noreferrer" aria-label={b.name} className="flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity">
