@@ -82,5 +82,37 @@
       { "name": "Panorama", "url": "https://panorama.solutions/en" }
     ],
     "logoVersion": 4
+  },
+  "site": {
+    "heroTitle": "Energy Transition Atlas",
+    "heroSubtitle": "Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners.",
+    "footerTagline": "The Energy Transition Atlas is a joint project of the Renewables Grid Initiative (RGI), the International Union for Conservation of Nature (IUCN), and their shared initiative GINGR \u2013 the Global Initiative for Nature, Grids and Renewables.",
+    "copyrightOrgs": "RGI, GINGR & IUCN",
+    "awards": {
+      "heading": "RGI Grid Awards",
+      "body": "Each year, the <a href=\"https://renewables-grid.eu/award/\" target=\"_blank\" rel=\"noopener noreferrer\">RGI Grid Awards</a> celebrate outstanding projects across three categories \u2013 <strong>Technological Innovation &amp; System Integration</strong>, <strong>Communication &amp; Engagement</strong>, and <strong>Environmental Protection</strong>. Winners receive the <em>Golden Pylon</em> trophy and are featured in the Atlas as \"Good Practice of the Year\".",
+      "linkLabel": "Learn more about the RGI Grid Awards",
+      "linkHref": "https://renewables-grid.eu/award/"
+    }
+  },
+  "nav": [
+    { "label": "Home", "href": "#/" },
+    { "label": "About", "href": "#about" },
+    { "label": "Submit a Practice", "href": "#submit" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "brandLinks": {
+    "RGI": "https://renewables-grid.eu",
+    "OCEaN": "https://offshore-coalition.eu",
+    "Panorama": "https://panorama.solutions/en",
+    "SL4B": "https://safelines4birds.eu",
+    "GINGR": "https://gingr.org",
+    "IUCN": "https://www.iucn.org/our-work/topic/green-just-energy-transition"
+  },
+  "atlasPartnerLabels": {
+    "RGI": "Renewables Grid Initiative (RGI)",
+    "OCEaN": "Offshore Coalition for Energy and Nature (OCEaN)",
+    "Panorama": "IUCN PANORAMA \u2013 Solutions for a Healthy Planet",
+    "SL4B": "LIFE SafeLines4Birds (SL4B)"
   }
 }

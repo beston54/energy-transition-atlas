@@ -7,7 +7,16 @@
   <link rel="icon" href="favicon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Keep Quill inside form rhythm */
+    .ql-editor { min-height: 100px; font-family: 'Albert Sans', sans-serif; font-size: 14px; color: #424244; }
+    .ql-container.ql-snow, .ql-toolbar.ql-snow { border-color: #C9C9C9; }
+    .ql-toolbar.ql-snow { border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; background: #FFF8E5; }
+    .ql-container.ql-snow { border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
+  </style>
   <style>
     body { font-family: 'Albert Sans', sans-serif; }
   </style>
@@ -84,8 +93,11 @@
 
       <!-- Tabs -->
       <div class="flex gap-2 mb-6 flex-wrap">
-        <button onclick="switchTab('csv')" id="tab-csv" class="px-4 py-2 rounded-full text-sm font-medium transition-colors bg-[#6B21A8] text-white">
-          Upload CSV
+        <button onclick="switchTab('practices')" id="tab-practices" class="px-4 py-2 rounded-full text-sm font-medium transition-colors bg-[#6B21A8] text-white">
+          Practices
+        </button>
+        <button onclick="switchTab('csv')" id="tab-csv" class="px-4 py-2 rounded-full text-sm font-medium transition-colors border border-[#C9C9C9] text-[#424244] hover:bg-white">
+          Bulk CSV
         </button>
         <button onclick="switchTab('about')" id="tab-about" class="px-4 py-2 rounded-full text-sm font-medium transition-colors border border-[#C9C9C9] text-[#424244] hover:bg-white">
           About Page
@@ -102,10 +114,162 @@
         <button onclick="switchTab('brandbar')" id="tab-brandbar" class="px-4 py-2 rounded-full text-sm font-medium transition-colors border border-[#C9C9C9] text-[#424244] hover:bg-white">
           Brand Bar
         </button>
+        <button onclick="switchTab('site')" id="tab-site" class="px-4 py-2 rounded-full text-sm font-medium transition-colors border border-[#C9C9C9] text-[#424244] hover:bg-white">
+          Site & Nav
+        </button>
+      </div>
+
+      <!-- Practices Tab -->
+      <div id="panel-practices">
+        <div class="bg-white rounded-xl border border-[#C9C9C9] p-6">
+          <div class="flex items-center justify-between gap-3 mb-2 flex-wrap">
+            <div>
+              <h2 class="font-bold text-[#6B21A8] text-xl">Edit a Practice</h2>
+              <p class="text-[#424244] text-sm mt-1">Search for any of the 355 practices and update a single row without re-uploading the whole CSV.</p>
+            </div>
+            <button onclick="loadPractices(true)" class="px-4 py-2 rounded-full border border-[#C9C9C9] text-[#424244] text-sm hover:bg-[#FFF8E5] transition-colors inline-flex items-center gap-1.5" id="practices-refresh">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh
+            </button>
+          </div>
+
+          <div id="practices-loading" class="text-[#6B6B6D] text-sm py-8 text-center">Loading practices…</div>
+
+          <div id="practices-content" class="hidden">
+            <div class="flex flex-wrap gap-3 items-center mb-4 mt-4">
+              <input id="practices-search" type="search" placeholder="Search by id, title, org, or country…" class="flex-1 min-w-[240px] px-4 py-2 rounded-lg border border-[#C9C9C9] text-sm focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20" oninput="renderPracticesTable()" />
+              <select id="practices-brand-filter" class="px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" onchange="renderPracticesTable()">
+                <option value="">All partners</option>
+                <option value="RGI">RGI</option>
+                <option value="OCEaN">OCEaN</option>
+                <option value="Panorama">Panorama</option>
+                <option value="SL4B">SL4B</option>
+              </select>
+              <span id="practices-count" class="text-xs text-[#6B6B6D]"></span>
+            </div>
+
+            <div class="overflow-x-auto border border-[#C9C9C9] rounded-lg">
+              <table class="w-full text-sm">
+                <thead class="bg-[#FFF8E5] text-[#6B6B6D] text-xs uppercase tracking-wider">
+                  <tr>
+                    <th class="text-left px-3 py-2 w-12">ID</th>
+                    <th class="text-left px-3 py-2">Title</th>
+                    <th class="text-left px-3 py-2 w-24">Partner</th>
+                    <th class="text-left px-3 py-2 w-28">Country</th>
+                    <th class="text-left px-3 py-2 w-16">Year</th>
+                    <th class="text-left px-3 py-2 w-8" title="Award"></th>
+                    <th class="text-right px-3 py-2 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody id="practices-tbody"></tbody>
+              </table>
+            </div>
+            <div id="practices-pagination" class="flex justify-between items-center mt-3 text-xs text-[#6B6B6D]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Practice Edit Modal -->
+      <div id="practice-modal" class="hidden fixed inset-0 z-40 bg-black/50 overflow-y-auto">
+        <div class="min-h-full flex items-start justify-center p-4">
+          <div class="bg-white rounded-xl w-full max-w-2xl my-8 border border-[#C9C9C9] shadow-2xl">
+            <div class="flex items-start justify-between gap-3 px-6 py-4 border-b border-[#C9C9C9]">
+              <div>
+                <h3 class="font-bold text-[#6B21A8] text-lg">Edit practice <span id="pmodal-id-badge" class="text-[#6B6B6D] text-sm font-normal"></span></h3>
+                <p class="text-xs text-[#6B6B6D]" id="pmodal-title-sub"></p>
+              </div>
+              <button aria-label="Close" onclick="closePracticeModal()" class="text-[#6B6B6D] hover:text-[#424244] text-lg leading-none">&times;</button>
+            </div>
+            <form id="pmodal-form" class="px-6 py-5 space-y-4" onsubmit="event.preventDefault(); savePractice();">
+              <div class="grid grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">ID <span class="text-[#6B6B6D]">(read-only)</span></span>
+                  <input id="pm-id" type="text" readonly class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] bg-[#FFF8E5] text-sm text-[#6B6B6D]" />
+                </label>
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Partner <span class="text-red-600">*</span></span>
+                  <select id="pm-brand" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required>
+                    <option value="RGI">RGI</option>
+                    <option value="OCEaN">OCEaN</option>
+                    <option value="Panorama">Panorama</option>
+                    <option value="SL4B">SL4B</option>
+                  </select>
+                </label>
+              </div>
+              <label class="block">
+                <span class="block text-xs font-medium text-[#424244] mb-1">Title <span class="text-red-600">*</span></span>
+                <input id="pm-title" type="text" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required />
+              </label>
+              <label class="block">
+                <span class="block text-xs font-medium text-[#424244] mb-1">Practice URL <span class="text-red-600">*</span></span>
+                <input id="pm-url" type="url" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required />
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Theme</span>
+                  <input id="pm-theme" type="text" placeholder="e.g. Nature, People" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                </label>
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Topic</span>
+                  <input id="pm-topic" type="text" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Infrastructure <span class="text-red-600">*</span></span>
+                  <input id="pm-inf" type="text" placeholder="e.g. Grids, Offshore wind" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required />
+                </label>
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Year</span>
+                  <input id="pm-year" type="number" min="1900" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Country</span>
+                  <input id="pm-country" type="text" placeholder="e.g. Germany, Europe, Worldwide" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                </label>
+                <label class="block">
+                  <span class="block text-xs font-medium text-[#424244] mb-1">Organisation</span>
+                  <input id="pm-org" type="text" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                </label>
+              </div>
+              <label class="block">
+                <span class="block text-xs font-medium text-[#424244] mb-1">Description</span>
+                <textarea id="pm-desc" rows="4" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm"></textarea>
+              </label>
+              <div>
+                <span class="block text-xs font-medium text-[#424244] mb-1">Image URL</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <input id="pm-img" type="url" placeholder="https://..." class="flex-1 min-w-[280px] px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" />
+                  <label class="cursor-pointer px-3 py-2 rounded-lg border border-[#6B21A8] text-[#6B21A8] text-xs font-medium hover:bg-[#6B21A8] hover:text-white transition-colors">
+                    Upload image
+                    <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="hidden" onchange="handlePracticeImageUpload(event)" />
+                  </label>
+                </div>
+                <p id="pm-img-status" class="text-xs mt-1 hidden"></p>
+                <div id="pm-img-preview-wrap" class="hidden mt-2">
+                  <img id="pm-img-preview" src="" alt="" class="max-h-32 rounded-lg border border-[#C9C9C9]" onerror="this.style.display='none'" />
+                </div>
+              </div>
+              <label class="inline-flex items-center gap-2 text-sm text-[#424244]">
+                <input id="pm-award" type="checkbox" class="w-4 h-4 text-[#6B21A8]" />
+                <span>RGI Grid Awards — Good Practice of the Year</span>
+              </label>
+
+              <p id="pmodal-error" class="text-red-600 text-xs hidden"></p>
+
+              <div class="flex justify-end gap-2 pt-2 border-t border-[#C9C9C9]">
+                <button type="button" onclick="closePracticeModal()" class="px-5 py-2 rounded-full border border-[#C9C9C9] text-[#424244] text-sm hover:bg-[#FFF8E5] transition-colors">Cancel</button>
+                <button type="submit" id="pmodal-save-btn" class="px-5 py-2 rounded-full bg-[#6B21A8] text-white text-sm font-medium hover:bg-[#6B21A8]/90 transition-colors">Save this practice</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
 
       <!-- CSV Upload Tab -->
-      <div id="panel-csv">
+      <div id="panel-csv" class="hidden">
         <div class="bg-white rounded-xl border border-[#C9C9C9] p-6 mb-6">
           <h2 class="font-bold text-[#6B21A8] text-xl mb-2">Download Master CSV</h2>
           <p class="text-[#424244] text-sm mb-4">Download the current <code class="bg-[#FFF8E5] px-1.5 py-0.5 rounded text-xs">practices_master.csv</code> (all 13 columns, including photo URLs) so your team can edit it and re-upload using the form below.</p>
@@ -167,7 +331,7 @@
           <form id="about-form" class="hidden space-y-6" onsubmit="event.preventDefault(); saveSection('about');">
             <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Intro Paragraphs</label>
-              <p class="text-xs text-[#6B6B6D] mb-2">The opening paragraphs at the top of the About page. HTML links (&lt;a href="..."&gt;) are supported.</p>
+              <p class="text-xs text-[#6B6B6D] mb-2">The opening paragraphs at the top of the About page. Use the toolbar to add bold, italics, or links.</p>
               <div class="space-y-3" id="about-intro-fields"></div>
               <button type="button" onclick="addAboutIntro()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add paragraph</button>
             </div>
@@ -190,7 +354,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-[#424244] mb-1">Collection Sources (bullets)</label>
-              <p class="text-xs text-[#6B6B6D] mb-2">Each entry becomes a bullet in the "How Practices Are Collected" list. HTML is supported (use &lt;strong&gt;...&lt;/strong&gt; for bold lead-ins).</p>
+              <p class="text-xs text-[#6B6B6D] mb-2">Each entry becomes a bullet in the "How Practices Are Collected" list. Use the toolbar for bold lead-ins.</p>
               <div class="space-y-3" id="about-sources-fields"></div>
               <button type="button" onclick="addAboutSource()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add source</button>
             </div>
@@ -336,6 +500,78 @@
         </div>
       </div>
 
+      <!-- Site & Nav Tab -->
+      <div id="panel-site" class="hidden">
+        <div class="bg-white rounded-xl border border-[#C9C9C9] p-6">
+          <h2 class="font-bold text-[#6B21A8] text-xl mb-2">Site Text &amp; Navigation</h2>
+          <p class="text-[#424244] text-sm mb-6">Edit the hero headline, navigation menu, footer copy, and the RGI Grid Awards section.</p>
+
+          <div id="site-loading" class="text-[#6B6B6D] text-sm py-8 text-center">Loading current content…</div>
+
+          <form id="site-form" class="hidden space-y-6" onsubmit="event.preventDefault(); saveSection('site');">
+            <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Hero headline</label>
+              <input id="site-hero-title" type="text" class="w-full px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Hero subtitle</label>
+              <textarea id="site-hero-subtitle" rows="2" class="w-full px-4 py-3 rounded-xl border border-[#C9C9C9] bg-white text-sm focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Footer tagline</label>
+              <p class="text-xs text-[#6B6B6D] mb-2">Use the toolbar to add bold, italics, or links.</p>
+              <div id="site-footer-quill-host"></div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Copyright organisations</label>
+              <input id="site-copyright" type="text" placeholder="e.g. RGI, GINGR & IUCN" class="w-full md:w-1/2 px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm" />
+              <p class="text-xs text-[#6B6B6D] mt-1">Prefixed with "© {current year}" automatically.</p>
+            </div>
+
+            <div class="border-t border-[#C9C9C9] pt-5">
+              <h3 class="font-semibold text-[#424244] text-sm mb-2">RGI Grid Awards section (About page)</h3>
+              <label class="block text-sm font-medium text-[#424244] mb-1">Heading</label>
+              <input id="site-awards-heading" type="text" class="w-full mb-3 px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm" />
+              <label class="block text-sm font-medium text-[#424244] mb-1">Body</label>
+              <p class="text-xs text-[#6B6B6D] mb-2">Use the toolbar for bold, italics, links.</p>
+              <div id="site-awards-quill-host" class="mb-3"></div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="block text-sm font-medium text-[#424244] mb-1">Learn-more link label</span>
+                  <input id="site-awards-linklabel" type="text" class="w-full px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm" />
+                </label>
+                <label class="block">
+                  <span class="block text-sm font-medium text-[#424244] mb-1">Learn-more link URL</span>
+                  <input id="site-awards-linkhref" type="url" class="w-full px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm" />
+                </label>
+              </div>
+            </div>
+
+            <div class="border-t border-[#C9C9C9] pt-5">
+              <h3 class="font-semibold text-[#424244] text-sm mb-2">Navigation menu</h3>
+              <p class="text-xs text-[#6B6B6D] mb-3">Links shown in the main menu. Use <code>#/</code>, <code>#about</code>, <code>#submit</code>, <code>#contact</code> for in-Atlas pages; anything starting with <code>http</code> becomes an external link.</p>
+              <div id="site-nav-fields" class="space-y-2"></div>
+              <button type="button" onclick="addNavItem()" class="mt-2 text-sm text-[#6B21A8] font-medium hover:underline">+ Add menu item</button>
+            </div>
+
+            <details class="border-t border-[#C9C9C9] pt-5">
+              <summary class="font-semibold text-[#424244] text-sm cursor-pointer">Advanced: partner URLs &amp; display labels</summary>
+              <p class="text-xs text-[#6B6B6D] mt-2 mb-3">Only change these if a partner renames itself or moves its website.</p>
+              <h4 class="text-sm font-medium text-[#424244] mb-1">Partner URLs</h4>
+              <div id="site-brandlinks-fields" class="space-y-2"></div>
+              <h4 class="text-sm font-medium text-[#424244] mt-4 mb-1">Atlas Partner display labels (shown in practice popups)</h4>
+              <div id="site-atlaslabels-fields" class="space-y-2"></div>
+            </details>
+
+            <p id="site-error" class="text-red-600 text-xs hidden"></p>
+
+            <button type="submit" class="px-6 py-2.5 rounded-full bg-[#6B21A8] text-white text-sm font-medium hover:bg-[#6B21A8]/90 transition-colors">Save Changes</button>
+          </form>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -343,7 +579,7 @@
     const OWNER = "RenewablesGridInitiative";
     const REPO = "energy-transition-atlas";
     const API = "https://api.github.com";
-    const ALL_TABS = ["csv", "about", "contact", "submit", "partners", "brandbar"];
+    const ALL_TABS = ["practices", "csv", "about", "contact", "submit", "partners", "brandbar", "site"];
     const ACTIVE_BTN = "px-4 py-2 rounded-full text-sm font-medium transition-colors bg-[#6B21A8] text-white";
     const INACTIVE_BTN = "px-4 py-2 rounded-full text-sm font-medium transition-colors border border-[#C9C9C9] text-[#424244] hover:bg-white";
 
@@ -548,7 +784,8 @@
         const btn = document.getElementById(`tab-${t}`);
         if (btn) btn.className = t === tab ? ACTIVE_BTN : INACTIVE_BTN;
       });
-      if (tab !== "csv" && !configData) loadConfig();
+      if (tab !== "csv" && tab !== "practices" && !configData) loadConfig();
+      if (tab === "practices" && practicesState.rows === null) loadPractices();
     }
 
     // ── Config Loading ──
@@ -574,6 +811,7 @@
       populateSubmitForm();
       populatePartnersForm();
       populateBrandBarForm();
+      populateSiteForm();
     }
 
     // ── About Form ──
@@ -609,30 +847,57 @@
       document.getElementById("about-form").classList.remove("hidden");
     }
 
-    function renderAboutIntro(container, text) {
+    // ── Rich-text (Quill) helpers ──
+    const QUILL_TOOLBAR = [["bold", "italic"], ["link"], [{ list: "ordered" }, { list: "bullet" }], ["clean"]];
+
+    // Mount a Quill editor into the given host element, seeded with initialHTML.
+    function mountQuill(host, initialHTML) {
+      const editorDiv = document.createElement("div");
+      host.appendChild(editorDiv);
+      const q = new Quill(editorDiv, { theme: "snow", modules: { toolbar: QUILL_TOOLBAR } });
+      if (initialHTML) q.clipboard.dangerouslyPasteHTML(initialHTML);
+      // Store reference for save
+      host._quill = q;
+    }
+
+    // Clean HTML output from a Quill host. Strips empty <p>s and trailing breaks;
+    // returns "" when the editor is effectively empty.
+    function getQuillHTML(host) {
+      if (!host._quill) return "";
+      let html = host._quill.root.innerHTML.trim();
+      // Quill's empty state is "<p><br></p>"; treat that as empty.
+      if (html === "<p><br></p>") return "";
+      // Extra sanitisation: strip script/iframe/event handlers (Quill already strips on paste, belt-and-braces)
+      html = html.replace(/<(script|iframe)[\s\S]*?<\/\1>/gi, "").replace(/\son\w+="[^"]*"/gi, "");
+      return html;
+    }
+
+    function renderAboutIntro(container, html) {
       const div = document.createElement("div");
       div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
       div.innerHTML = `
         <div class="flex justify-end">
           <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
         </div>
-        <textarea class="about-intro-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="4">${escHtml(text)}</textarea>`;
+        <div class="about-intro-quill"></div>`;
       container.appendChild(div);
+      mountQuill(div.querySelector(".about-intro-quill"), html);
     }
 
     function addAboutIntro() {
       renderAboutIntro(document.getElementById("about-intro-fields"), "");
     }
 
-    function renderAboutSource(container, text) {
+    function renderAboutSource(container, html) {
       const div = document.createElement("div");
       div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
       div.innerHTML = `
         <div class="flex justify-end">
           <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
         </div>
-        <textarea class="about-source-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="3">${escHtml(text)}</textarea>`;
+        <div class="about-source-quill"></div>`;
       container.appendChild(div);
+      mountQuill(div.querySelector(".about-source-quill"), html);
     }
 
     function addAboutSource() {
@@ -669,15 +934,16 @@
       document.getElementById("submit-form").classList.remove("hidden");
     }
 
-    function renderOverviewParagraph(container, text) {
+    function renderOverviewParagraph(container, html) {
       const div = document.createElement("div");
       div.className = "bg-[#FFF8E5] rounded-lg p-3 space-y-2";
       div.innerHTML = `
         <div class="flex justify-end">
           <button type="button" onclick="this.closest('.bg-\\\\[\\\\#FFF8E5\\\\]').remove()" class="text-red-500 text-xs hover:underline">Remove</button>
         </div>
-        <textarea class="submit-overview-text w-full px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm" rows="5">${escHtml(text)}</textarea>`;
+        <div class="submit-overview-quill"></div>`;
       container.appendChild(div);
+      mountQuill(div.querySelector(".submit-overview-quill"), html);
     }
 
     function addOverviewParagraph() {
@@ -810,6 +1076,85 @@
       container.appendChild(div);
     }
 
+    // ── Site & Nav Form ──
+    function populateSiteForm() {
+      const site = configData.site || {};
+      const nav = configData.nav || [
+        { label: "Home", href: "#/" },
+        { label: "About", href: "#about" },
+        { label: "Submit a Practice", href: "#submit" },
+        { label: "Contact", href: "#contact" },
+      ];
+      const brandLinks = configData.brandLinks || {};
+      const atlasLabels = configData.atlasPartnerLabels || {};
+
+      document.getElementById("site-hero-title").value = site.heroTitle || "Energy Transition Atlas";
+      document.getElementById("site-hero-subtitle").value = site.heroSubtitle || "";
+      document.getElementById("site-copyright").value = site.copyrightOrgs || "RGI, GINGR & IUCN";
+      document.getElementById("site-awards-heading").value = site.awards?.heading || "RGI Grid Awards";
+      document.getElementById("site-awards-linklabel").value = site.awards?.linkLabel || "Learn more about the RGI Grid Awards";
+      document.getElementById("site-awards-linkhref").value = site.awards?.linkHref || "https://renewables-grid.eu/award/";
+
+      // Footer tagline — Quill
+      const footerHost = document.getElementById("site-footer-quill-host");
+      footerHost.innerHTML = "";
+      mountQuill(footerHost, site.footerTagline || "");
+
+      // Awards body — Quill
+      const awardsHost = document.getElementById("site-awards-quill-host");
+      awardsHost.innerHTML = "";
+      mountQuill(awardsHost, site.awards?.body || "");
+
+      // Nav items
+      const navContainer = document.getElementById("site-nav-fields");
+      navContainer.innerHTML = "";
+      nav.forEach((item) => renderNavRow(navContainer, item));
+
+      // Brand links: edit URLs for each well-known partner
+      const blContainer = document.getElementById("site-brandlinks-fields");
+      blContainer.innerHTML = "";
+      const defaultKeys = ["RGI", "OCEaN", "Panorama", "SL4B", "GINGR", "IUCN"];
+      const keys = Array.from(new Set([...defaultKeys, ...Object.keys(brandLinks)]));
+      keys.forEach((k) => {
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-2";
+        div.innerHTML = `
+          <span class="w-24 text-xs font-medium text-[#424244]">${escHtml(k)}</span>
+          <input data-key="${escHtml(k)}" value="${escHtml(brandLinks[k] || "")}" placeholder="https://…" class="flex-1 px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm site-brandlink" />`;
+        blContainer.appendChild(div);
+      });
+
+      // Atlas partner labels
+      const alContainer = document.getElementById("site-atlaslabels-fields");
+      alContainer.innerHTML = "";
+      const labelKeys = ["RGI", "OCEaN", "Panorama", "SL4B"];
+      labelKeys.forEach((k) => {
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-2";
+        div.innerHTML = `
+          <span class="w-24 text-xs font-medium text-[#424244]">${escHtml(k)}</span>
+          <input data-key="${escHtml(k)}" value="${escHtml(atlasLabels[k] || "")}" placeholder="Display name…" class="flex-1 px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm site-atlaslabel" />`;
+        alContainer.appendChild(div);
+      });
+
+      document.getElementById("site-loading").classList.add("hidden");
+      document.getElementById("site-form").classList.remove("hidden");
+    }
+
+    function renderNavRow(container, item) {
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-2";
+      div.innerHTML = `
+        <input value="${escHtml(item.label)}" placeholder="Label" class="w-40 px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm site-nav-label" />
+        <input value="${escHtml(item.href)}" placeholder="#href or https://…" class="flex-1 px-3 py-1.5 rounded-lg border border-[#C9C9C9] text-sm site-nav-href" />
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 text-xs hover:underline">Remove</button>`;
+      container.appendChild(div);
+    }
+
+    function addNavItem() {
+      renderNavRow(document.getElementById("site-nav-fields"), { label: "", href: "" });
+    }
+
     // ── Unified Save ──
     async function saveSection(section) {
       hideMsg(`${section}-error`);
@@ -823,17 +1168,17 @@
           values.push({ title: document.getElementById(`val-title-${i}`).value, text: document.getElementById(`val-text-${i}`).value });
           i++;
         }
-        // Intro paragraphs (preserves any HTML the admin typed)
+        // Intro paragraphs — pulled from Quill editors as HTML
         const introParas = [];
-        document.querySelectorAll("#about-intro-fields .about-intro-text").forEach((ta) => {
-          const v = ta.value;
-          if (v.trim()) introParas.push(v);
+        document.querySelectorAll("#about-intro-fields .about-intro-quill").forEach((host) => {
+          const v = getQuillHTML(host);
+          if (v) introParas.push(v);
         });
-        // Collection sources bullets
+        // Collection sources bullets — Quill HTML
         const sources = [];
-        document.querySelectorAll("#about-sources-fields .about-source-text").forEach((ta) => {
-          const v = ta.value;
-          if (v.trim()) sources.push(v);
+        document.querySelectorAll("#about-sources-fields .about-source-quill").forEach((host) => {
+          const v = getQuillHTML(host);
+          if (v) sources.push(v);
         });
         configData.about.intro = introParas;
         configData.about.vision = document.getElementById("about-vision").value;
@@ -857,9 +1202,9 @@
 
       else if (section === "submit") {
         const overview = [];
-        document.querySelectorAll("#submit-overview-fields .submit-overview-text").forEach((ta) => {
-          const v = ta.value;
-          if (v.trim()) overview.push(v);
+        document.querySelectorAll("#submit-overview-fields .submit-overview-quill").forEach((host) => {
+          const v = getQuillHTML(host);
+          if (v) overview.push(v);
         });
 
         const pathways = [];
@@ -890,6 +1235,44 @@
           if (nameEl) partners.push({ name: nameEl.value, url: urlEl?.value || "", desc: descEl?.value || "" });
         });
         configData.partners = partners;
+      }
+
+      else if (section === "site") {
+        configData.site = {
+          heroTitle: document.getElementById("site-hero-title").value.trim(),
+          heroSubtitle: document.getElementById("site-hero-subtitle").value.trim(),
+          footerTagline: getQuillHTML(document.getElementById("site-footer-quill-host")),
+          copyrightOrgs: document.getElementById("site-copyright").value.trim(),
+          awards: {
+            heading: document.getElementById("site-awards-heading").value.trim(),
+            body: getQuillHTML(document.getElementById("site-awards-quill-host")),
+            linkLabel: document.getElementById("site-awards-linklabel").value.trim(),
+            linkHref: document.getElementById("site-awards-linkhref").value.trim(),
+          },
+        };
+        const nav = [];
+        document.querySelectorAll("#site-nav-fields > div").forEach((div) => {
+          const label = div.querySelector(".site-nav-label")?.value.trim() || "";
+          const href = div.querySelector(".site-nav-href")?.value.trim() || "";
+          if (label && href) nav.push({ label, href });
+        });
+        configData.nav = nav;
+
+        const brandLinks = {};
+        document.querySelectorAll(".site-brandlink").forEach((inp) => {
+          const k = inp.dataset.key;
+          const v = inp.value.trim();
+          if (k && v) brandLinks[k] = v;
+        });
+        if (Object.keys(brandLinks).length > 0) configData.brandLinks = brandLinks;
+
+        const labels = {};
+        document.querySelectorAll(".site-atlaslabel").forEach((inp) => {
+          const k = inp.dataset.key;
+          const v = inp.value.trim();
+          if (k && v) labels[k] = v;
+        });
+        if (Object.keys(labels).length > 0) configData.atlasPartnerLabels = labels;
       }
 
       else if (section === "brandbar") {
@@ -925,7 +1308,7 @@
       }
 
       // Save to GitHub
-      const sectionLabels = { about: "About page", contact: "Contact page", submit: "Submit page", partners: "Partners", brandbar: "Brand bar" };
+      const sectionLabels = { about: "About page", contact: "Contact page", submit: "Submit page", partners: "Partners", brandbar: "Brand bar", site: "Site text" };
       const label = sectionLabels[section] || section;
       try {
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2) + "\n")));
@@ -1133,6 +1516,237 @@
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
+      }
+    }
+
+    // ── Practices tab (single-practice editor) ──
+    const practicesState = { rows: null, sha: null, filtered: [], limit: 50, editing: null };
+
+    async function loadPractices(forceRefresh) {
+      const loadingEl = document.getElementById("practices-loading");
+      const contentEl = document.getElementById("practices-content");
+      contentEl.classList.add("hidden");
+      loadingEl.classList.remove("hidden");
+      loadingEl.textContent = forceRefresh ? "Refreshing…" : "Loading practices…";
+      try {
+        const res = await ghFetch(`/repos/${OWNER}/${REPO}/contents/practices_master.csv`, token);
+        if (!res.ok) throw new Error(await translateGhError(res, "Could not load practices"));
+        const data = await res.json();
+        practicesState.sha = data.sha;
+        const text = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+        const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+        practicesState.rows = parsed.data || [];
+        csvServerRows = practicesState.rows; // keep CSV-diff path in sync
+        loadingEl.classList.add("hidden");
+        contentEl.classList.remove("hidden");
+        renderPracticesTable();
+      } catch (e) {
+        loadingEl.textContent = e.message;
+      }
+    }
+
+    function renderPracticesTable() {
+      if (!practicesState.rows) return;
+      const search = (document.getElementById("practices-search").value || "").trim().toLowerCase();
+      const brand = document.getElementById("practices-brand-filter").value;
+      practicesState.filtered = practicesState.rows.filter((r) => {
+        if (brand && r.brand !== brand) return false;
+        if (!search) return true;
+        const hay = [r.id, r.title, r.org, r.country, r.topic].map((x) => (x || "").toString().toLowerCase()).join(" ");
+        return hay.includes(search);
+      });
+      const tbody = document.getElementById("practices-tbody");
+      tbody.innerHTML = "";
+      const slice = practicesState.filtered.slice(0, practicesState.limit);
+      slice.forEach((row) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-t border-[#C9C9C9] hover:bg-[#FFF8E5] transition-colors";
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-[#6B6B6D]">${escHtml(row.id)}</td>
+          <td class="px-3 py-2 text-[#424244] max-w-[420px]"><div class="truncate" title="${escHtml(row.title)}">${escHtml(row.title)}</div></td>
+          <td class="px-3 py-2 text-[#6B6B6D]">${escHtml(row.brand)}</td>
+          <td class="px-3 py-2 text-[#6B6B6D] truncate max-w-[180px]" title="${escHtml(row.country)}">${escHtml(row.country)}</td>
+          <td class="px-3 py-2 text-[#6B6B6D]">${escHtml(row.year)}</td>
+          <td class="px-3 py-2 text-center text-amber-500" title="${row.award?.toLowerCase() === "true" ? "Award winner" : ""}">${row.award?.toLowerCase() === "true" ? "★" : ""}</td>
+          <td class="px-3 py-2 text-right"><button type="button" class="text-[#6B21A8] text-xs font-medium hover:underline" onclick='openPracticeModal(${JSON.stringify(row.id)})'>Edit</button></td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById("practices-count").textContent =
+        `Showing ${slice.length} of ${practicesState.filtered.length}${practicesState.filtered.length !== practicesState.rows.length ? ` filtered (${practicesState.rows.length} total)` : ""}`;
+      const more = practicesState.filtered.length - slice.length;
+      document.getElementById("practices-pagination").innerHTML = more > 0
+        ? `<span>${more} more match${more === 1 ? "" : "es"} — narrow your search or <button class="text-[#6B21A8] underline ml-1" onclick="practicesState.limit += 100; renderPracticesTable();">show 100 more</button></span><span></span>`
+        : "<span></span><span></span>";
+    }
+
+    function openPracticeModal(id) {
+      const row = practicesState.rows.find((r) => String(r.id) === String(id));
+      if (!row) return;
+      practicesState.editing = { id: row.id };
+      document.getElementById("pmodal-id-badge").textContent = `#${row.id}`;
+      document.getElementById("pmodal-title-sub").textContent = row.title;
+      document.getElementById("pm-id").value = row.id || "";
+      document.getElementById("pm-title").value = row.title || "";
+      document.getElementById("pm-url").value = row.url || "";
+      document.getElementById("pm-brand").value = row.brand || "RGI";
+      document.getElementById("pm-theme").value = row.theme || "";
+      document.getElementById("pm-topic").value = row.topic || "";
+      document.getElementById("pm-inf").value = row.inf || "";
+      document.getElementById("pm-year").value = row.year || "";
+      document.getElementById("pm-country").value = row.country || "";
+      document.getElementById("pm-org").value = row.org || "";
+      document.getElementById("pm-desc").value = row.desc || "";
+      document.getElementById("pm-img").value = row.img || "";
+      document.getElementById("pm-award").checked = (row.award || "").toLowerCase() === "true";
+      refreshImagePreview();
+      hideMsg("pmodal-error");
+      hideMsg("pm-img-status");
+      const modal = document.getElementById("practice-modal");
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => document.getElementById("pm-title").focus(), 50);
+    }
+
+    function closePracticeModal() {
+      document.getElementById("practice-modal").classList.add("hidden");
+      document.body.style.overflow = "";
+      practicesState.editing = null;
+    }
+
+    // Live-update the small image preview when the user pastes a URL.
+    document.addEventListener("input", (e) => {
+      if (e.target && e.target.id === "pm-img") refreshImagePreview();
+    });
+
+    function refreshImagePreview() {
+      const url = (document.getElementById("pm-img").value || "").trim();
+      const wrap = document.getElementById("pm-img-preview-wrap");
+      const img = document.getElementById("pm-img-preview");
+      if (url && /^https?:\/\/\S+$/.test(url)) {
+        img.src = url;
+        img.style.display = "";
+        wrap.classList.remove("hidden");
+      } else {
+        wrap.classList.add("hidden");
+      }
+    }
+
+    async function savePractice() {
+      if (!practicesState.editing) return;
+      const btn = document.getElementById("pmodal-save-btn");
+      const errEl = document.getElementById("pmodal-error");
+      errEl.classList.add("hidden");
+
+      const updated = {
+        id: document.getElementById("pm-id").value,
+        title: document.getElementById("pm-title").value.trim(),
+        url: document.getElementById("pm-url").value.trim(),
+        brand: document.getElementById("pm-brand").value.trim(),
+        theme: document.getElementById("pm-theme").value.trim(),
+        topic: document.getElementById("pm-topic").value.trim(),
+        inf: document.getElementById("pm-inf").value.trim(),
+        year: document.getElementById("pm-year").value.trim(),
+        country: document.getElementById("pm-country").value.trim(),
+        org: document.getElementById("pm-org").value.trim(),
+        desc: document.getElementById("pm-desc").value,
+        img: document.getElementById("pm-img").value.trim(),
+        award: document.getElementById("pm-award").checked ? "true" : "false",
+      };
+
+      // Local validation against the shared spec
+      const errs = validatePractices([updated], CSV_HEADERS);
+      if (errs.length > 0) {
+        const lines = errs.slice(0, 5).map((e) => `${e.column}: ${e.message}`);
+        errEl.textContent = lines.join(" · ");
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Saving…";
+
+      try {
+        // Build new CSV from the rows array, swapping in the updated row.
+        const newRows = practicesState.rows.map((r) => (String(r.id) === String(updated.id) ? { ...r, ...updated } : r));
+        const csv = Papa.unparse(newRows, { columns: CSV_HEADERS, newline: "\n" }) + "\n";
+        const content = btoa(unescape(encodeURIComponent(csv)));
+        const res = await ghFetch(`/repos/${OWNER}/${REPO}/contents/practices_master.csv`, token, {
+          method: "PUT",
+          body: JSON.stringify({
+            message: `Update practice #${updated.id} (${updated.title.slice(0, 50)}) via Atlas Admin`,
+            content,
+            sha: practicesState.sha,
+            branch: "main",
+          }),
+        });
+        if (!res.ok) throw new Error(await translateGhError(res, "Save failed"));
+        const result = await res.json();
+        practicesState.sha = result.content.sha;
+        practicesState.rows = newRows;
+        csvServerRows = newRows;
+        closePracticeModal();
+        renderPracticesTable();
+        toast(`Practice #${updated.id} saved. GitHub is rebuilding — changes appear in 1–2 minutes.`, {
+          level: "success",
+          linkUrl: ACTIONS_URL,
+          linkLabel: "Watch the build progress",
+        });
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Save this practice";
+      }
+    }
+
+    async function handlePracticeImageUpload(event) {
+      if (!practicesState.editing) return;
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById("pm-img-status");
+      const setStatus = (msg, cls) => {
+        statusEl.textContent = msg;
+        statusEl.className = `text-xs mt-1 ${cls}`;
+        statusEl.classList.remove("hidden");
+      };
+
+      const ext = (file.name.split(".").pop() || "").toLowerCase();
+      if (!["jpg", "jpeg", "png"].includes(ext)) {
+        setStatus("Please choose a .jpg or .png file.", "text-red-600");
+        event.target.value = "";
+        return;
+      }
+      if (file.size > 900 * 1024) {
+        setStatus(`File is ${(file.size / 1024).toFixed(0)} KB. Please use a file under 900 KB (compress the image if needed).`, "text-red-600");
+        event.target.value = "";
+        return;
+      }
+
+      const id = practicesState.editing.id;
+      const targetPath = `images/practices/${id}.${ext === "jpeg" ? "jpg" : ext}`;
+      setStatus("Uploading image…", "text-[#6B6B6D]");
+
+      try {
+        const content = await readFileAsBase64(file);
+        // Fetch existing sha if the file already exists
+        const existingRes = await ghFetch(`/repos/${OWNER}/${REPO}/contents/${targetPath}`, token);
+        const existingSha = existingRes.ok ? (await existingRes.json()).sha : null;
+
+        const putBody = { message: `Update image for practice #${id} via Atlas Admin`, content, branch: "main" };
+        if (existingSha) putBody.sha = existingSha;
+        const putRes = await ghFetch(`/repos/${OWNER}/${REPO}/contents/${targetPath}`, token, { method: "PUT", body: JSON.stringify(putBody) });
+        if (!putRes.ok) throw new Error(await translateGhError(putRes, "Image upload failed"));
+
+        const result = await putRes.json();
+        const rawUrl = result.content?.download_url || `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${targetPath}`;
+        document.getElementById("pm-img").value = rawUrl;
+        refreshImagePreview();
+        setStatus(`Uploaded to ${targetPath}. Click "Save this practice" to finalise.`, "text-emerald-600");
+      } catch (e) {
+        setStatus("Error: " + e.message, "text-red-600");
+      } finally {
+        event.target.value = "";
       }
     }
 

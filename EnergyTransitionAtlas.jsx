@@ -902,7 +902,7 @@ function HeroGraphic() {
   );
 }
 
-function PracticeDetailModal({ practice, onClose, themeClasses: getThemeClasses }) {
+function PracticeDetailModal({ practice, onClose, themeClasses: getThemeClasses, brandLinks, atlasPartnerLabels }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -978,7 +978,7 @@ function PracticeDetailModal({ practice, onClose, themeClasses: getThemeClasses 
           {/* Atlas Partner */}
           {p.brand && (
             <p className="text-xs text-[#6B6B6D] mb-6">
-              Atlas Partner: <a href={BRAND_LINKS[p.brand]} target="_blank" rel="noopener noreferrer" className="text-[#6B21A8] font-medium hover:underline">{{ RGI: "Renewables Grid Initiative (RGI)", OCEaN: "Offshore Coalition for Energy and Nature (OCEaN)", Panorama: "IUCN PANORAMA – Solutions for a Healthy Planet", SL4B: "LIFE SafeLines4Birds (SL4B)" }[p.brand] || p.brand}</a>
+              Atlas Partner: <a href={brandLinks?.[p.brand]} target="_blank" rel="noopener noreferrer" className="text-[#6B21A8] font-medium hover:underline">{atlasPartnerLabels?.[p.brand] || p.brand}</a>
             </p>
           )}
           {/* Actions */}
@@ -1244,6 +1244,20 @@ export default function EnergyTransitionAtlas() {
   const submitConfig = siteConfig?.submit || null;
   const partnersConfig = siteConfig?.partners || null;
   const brandBarConfig = siteConfig?.brandBar || null;
+  const siteCopy = siteConfig?.site || null;
+  const navItems = siteConfig?.nav || [
+    { label: "Home", href: "#/" },
+    { label: "About", href: "#about" },
+    { label: "Submit a Practice", href: "#submit" },
+    { label: "Contact", href: "#contact" },
+  ];
+  const brandLinks = { ...BRAND_LINKS, ...(siteConfig?.brandLinks || {}) };
+  const atlasPartnerLabels = siteConfig?.atlasPartnerLabels || {
+    RGI: "Renewables Grid Initiative (RGI)",
+    OCEaN: "Offshore Coalition for Energy and Nature (OCEaN)",
+    Panorama: "IUCN PANORAMA – Solutions for a Healthy Planet",
+    SL4B: "LIFE SafeLines4Birds (SL4B)",
+  };
 
   /* ── Hash change listener ── */
   useEffect(() => {
@@ -1444,9 +1458,9 @@ export default function EnergyTransitionAtlas() {
         <div className="max-w-7xl mx-auto flex items-center gap-5 overflow-x-auto scrollbar-hide">
           <span className="text-[#C9C9C9] text-xs whitespace-nowrap flex-shrink-0">A platform by</span>
           {(brandBarConfig?.owners || [
-            { name: "RGI", url: BRAND_LINKS.RGI, logo: "logos/rgi.svg" },
-            { name: "GINGR", url: BRAND_LINKS.GINGR, logo: "logos/gingr-official-white.svg" },
-            { name: "IUCN", url: BRAND_LINKS.IUCN, logo: "logos/iucn.png" },
+            { name: "RGI", url: brandLinks.RGI, logo: "logos/rgi.svg" },
+            { name: "GINGR", url: brandLinks.GINGR, logo: "logos/gingr-official-white.svg" },
+            { name: "IUCN", url: brandLinks.IUCN, logo: "logos/iucn.png" },
           ]).map(b => {
             // Optical sizing: equalise visible content height across logos.
             // GINGR fills ~95% of its box, RGI ~90%, IUCN ~73% → IUCN needs more box to match.
@@ -1470,9 +1484,9 @@ export default function EnergyTransitionAtlas() {
           <span className="text-[#C9C9C9]/50 text-xs mx-1 flex-shrink-0">|</span>
           <span className="text-[#C9C9C9] text-xs whitespace-nowrap flex-shrink-0">with</span>
           {(brandBarConfig?.partners || [
-            { name: "OCEaN", url: BRAND_LINKS.OCEaN },
-            { name: "SL4B", url: BRAND_LINKS.SL4B },
-            { name: "Panorama", url: BRAND_LINKS.Panorama },
+            { name: "OCEaN", url: brandLinks.OCEaN },
+            { name: "SL4B", url: brandLinks.SL4B },
+            { name: "Panorama", url: brandLinks.Panorama },
           ]).map(b => (
             <a key={b.name} href={b.url} target="_blank" rel="noopener noreferrer" className="text-[#C9C9C9] text-xs font-medium hover:text-white transition-colors whitespace-nowrap flex-shrink-0">
               {b.name}
@@ -1493,7 +1507,7 @@ export default function EnergyTransitionAtlas() {
               else navigateTo("#/");
             }}
           >
-            Energy Transition Atlas
+            {siteCopy?.heroTitle || "Energy Transition Atlas"}
           </h1>
           <div ref={menuRef} className="relative flex-shrink-0">
             <button
@@ -1507,10 +1521,9 @@ export default function EnergyTransitionAtlas() {
             {/* Desktop dropdown */}
             {menuOpen && (
               <div className="hidden md:block absolute right-0 z-50 mt-2 w-48 rounded-xl bg-white shadow-lg border border-[#C9C9C9] py-2">
-                <button onClick={() => navigateTo("#/")} className="block w-full text-left px-4 py-2 text-sm text-[#424244] hover:bg-[#FFF8E5] transition-colors">Home</button>
-                <button onClick={() => navigateTo("#about")} className="block w-full text-left px-4 py-2 text-sm text-[#424244] hover:bg-[#FFF8E5] transition-colors">About</button>
-                <button onClick={() => navigateTo("#submit")} className="block w-full text-left px-4 py-2 text-sm text-[#424244] hover:bg-[#FFF8E5] transition-colors">Submit a Practice</button>
-                <button onClick={() => navigateTo("#contact")} className="block w-full text-left px-4 py-2 text-sm text-[#424244] hover:bg-[#FFF8E5] transition-colors">Contact</button>
+                {navItems.map(item => (
+                  <button key={item.href} onClick={() => navigateTo(item.href)} className="block w-full text-left px-4 py-2 text-sm text-[#424244] hover:bg-[#FFF8E5] transition-colors">{item.label}</button>
+                ))}
               </div>
             )}
             {/* Mobile slide-out panel */}
@@ -1524,12 +1537,7 @@ export default function EnergyTransitionAtlas() {
                       <button onClick={() => setMenuOpen(false)} className="text-[#FFF8E5] text-2xl leading-none" aria-label="Close menu">×</button>
                     </div>
                     <nav className="space-y-1">
-                      {[
-                        { label: "Home", hash: "#/" },
-                        { label: "About", hash: "#about" },
-                        { label: "Submit a Practice", hash: "#submit" },
-                        { label: "Contact", hash: "#contact" },
-                      ].map(item => (
+                      {navItems.map(item => ({ label: item.label, hash: item.href })).map(item => (
                         <button key={item.hash} onClick={() => navigateTo(item.hash)}
                           className={`block w-full text-left px-4 py-3 rounded-lg text-[#FFF8E5] text-lg font-medium transition-colors ${
                             currentPage === item.hash ? "bg-white/10" : "hover:bg-white/5"
@@ -1567,10 +1575,10 @@ export default function EnergyTransitionAtlas() {
                 className={`font-['League_Gothic'] text-white text-5xl sm:text-6xl lg:text-7xl uppercase tracking-wide leading-[0.95] ${!isHome ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
                 onClick={() => { if (!isHome) navigateTo("#/"); }}
               >
-                Energy Transition Atlas
+                {siteCopy?.heroTitle || "Energy Transition Atlas"}
               </h2>
               <p className="mt-3 lg:mt-4 text-[#FFF8E5] text-sm sm:text-base lg:text-xl font-light max-w-xl lg:max-w-3xl leading-relaxed opacity-90">
-                Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners.
+                {siteCopy?.heroSubtitle || "Explore proven practices for decarbonising energy, protecting nature, and improving lives, shared by a growing network of partners."}
               </p>
             </div>
             <div className="hidden lg:block lg:w-6/12">
@@ -1657,23 +1665,27 @@ export default function EnergyTransitionAtlas() {
               </ul>
               <p className="text-sm text-[#6B6B6D]">{aboutConfig?.collection?.cta || "The collection keeps growing. New partners and practices are added on a rolling basis."} {" "}<a href="#contact" onClick={(e) => { e.preventDefault(); setCurrentPage("#contact"); window.scrollTo(0, 0); }} className="text-[#6B21A8] underline hover:text-[#6B21A8]/80">Get in touch</a>.</p>
 
-              <h3 className="font-['League_Gothic'] text-[#6B21A8] text-2xl uppercase tracking-wide mt-8 scroll-mt-24" id="about-award">RGI Grid Awards</h3>
+              <h3 className="font-['League_Gothic'] text-[#6B21A8] text-2xl uppercase tracking-wide mt-8 scroll-mt-24" id="about-award">{siteCopy?.awards?.heading || "RGI Grid Awards"}</h3>
               <div className="flex items-start gap-4 mt-4 p-5 bg-white rounded-xl border border-[#C9C9C9]">
                 <div>
-                  <p className="text-sm leading-relaxed">The <span className="inline-flex items-center align-middle"><IconAward /><span className="sr-only">star</span></span> icon on practice cards marks winners of the <strong>RGI Grid Awards: Good Practice of the Year</strong>, an annual recognition by the Renewables Grid Initiative. Winners are selected in three categories: Technological Innovation &amp; System Integration, Communication &amp; Engagement, and Environmental Protection. They receive the <strong>Golden Pylon</strong> trophy at a ceremony during the PCI Energy Days in Brussels. {PRACTICES.filter(p => p.award).length} practices in the Atlas hold this award.</p>
-                  <a href="https://renewables-grid.eu/award/" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-[#6B21A8] underline hover:text-[#6B21A8]/80">Learn more about the RGI Grid Awards</a>
+                  <p className="text-sm leading-relaxed"><span className="inline-flex items-center align-middle mr-1"><IconAward /><span className="sr-only">star</span></span>
+                    <span dangerouslySetInnerHTML={{ __html: siteCopy?.awards?.body || `The icon on practice cards marks winners of the <strong>RGI Grid Awards: Good Practice of the Year</strong>, an annual recognition. ${PRACTICES.filter(p => p.award).length} practices in the Atlas hold this award.` }} />
+                  </p>
+                  {(siteCopy?.awards?.linkHref || "https://renewables-grid.eu/award/") && (
+                    <a href={siteCopy?.awards?.linkHref || "https://renewables-grid.eu/award/"} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-sm text-[#6B21A8] underline hover:text-[#6B21A8]/80">{siteCopy?.awards?.linkLabel || "Learn more about the RGI Grid Awards"}</a>
+                  )}
                 </div>
               </div>
 
               <h3 className="font-['League_Gothic'] text-[#6B21A8] text-2xl uppercase tracking-wide mt-8 scroll-mt-24" id="about-partners">Contributing Partners</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {(partnersConfig || [
-                  { name: "GINGR", url: BRAND_LINKS.GINGR, desc: "The Global Initiative for Nature, Grids and Renewables is a joint initiative of RGI and IUCN that owns and manages the Energy Transition Atlas." },
-                  { name: "RGI", url: BRAND_LINKS.RGI, desc: "The Renewables Grid Initiative brings together NGOs and transmission system operators to promote transparent and environmentally sensitive grid development across Europe." },
-                  { name: "IUCN", url: BRAND_LINKS.IUCN, desc: "The International Union for Conservation of Nature drives global action on nature-positive energy through its Green, Just Energy Transition programme and co-founded GINGR." },
-                  { name: "OCEaN", url: BRAND_LINKS.OCEaN, desc: "The Offshore Coalition for Energy and Nature works to ensure offshore renewable energy and marine nature conservation develop in harmony." },
-                  { name: "SL4B", url: BRAND_LINKS.SL4B, desc: "LIFE SafeLines4Birds promotes bird-safe practices for power line infrastructure, reducing avian collision and electrocution risks." },
-                  { name: "Panorama", url: BRAND_LINKS.Panorama, desc: "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Energy-relevant practices from Panorama are featured in the Atlas." },
+                  { name: "GINGR", url: brandLinks.GINGR, desc: "The Global Initiative for Nature, Grids and Renewables is a joint initiative of RGI and IUCN that owns and manages the Energy Transition Atlas." },
+                  { name: "RGI", url: brandLinks.RGI, desc: "The Renewables Grid Initiative brings together NGOs and transmission system operators to promote transparent and environmentally sensitive grid development across Europe." },
+                  { name: "IUCN", url: brandLinks.IUCN, desc: "The International Union for Conservation of Nature drives global action on nature-positive energy through its Green, Just Energy Transition programme and co-founded GINGR." },
+                  { name: "OCEaN", url: brandLinks.OCEaN, desc: "The Offshore Coalition for Energy and Nature works to ensure offshore renewable energy and marine nature conservation develop in harmony." },
+                  { name: "SL4B", url: brandLinks.SL4B, desc: "LIFE SafeLines4Birds promotes bird-safe practices for power line infrastructure, reducing avian collision and electrocution risks." },
+                  { name: "Panorama", url: brandLinks.Panorama, desc: "PANORAMA \u2013 Solutions for a Healthy Planet is an IUCN-hosted platform showcasing nature-based solutions worldwide. Energy-relevant practices from Panorama are featured in the Atlas." },
                 ]).map((partner) => (
                   <a
                     key={partner.name}
@@ -1722,9 +1734,9 @@ export default function EnergyTransitionAtlas() {
             <div className="grid sm:grid-cols-2 gap-5 mb-10">
               {(submitConfig?.pathways || [
                 { name: "RGI Grid Awards", url: "https://renewables-grid.eu/award/", desc: "The RGI Grid Awards recognise outstanding Good Practices of the Year with the Golden Pylon trophy. Winners are selected in three categories: Technological Innovation & System Integration, Communication & Engagement, and Environmental Protection. Award-winning practices are featured in the Atlas.", color: "border-l-amber-500" },
-                { name: "OCEaN", url: BRAND_LINKS.OCEaN, desc: "The Offshore Coalition for Energy and Nature focuses on enhancement and restoration projects in the offshore wind sector, demonstrating how offshore energy and marine conservation can work together.", color: "border-l-sky-500" },
-                { name: "SafeLines4Birds", url: BRAND_LINKS.SL4B, desc: "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping.", color: "border-l-orange-500" },
-                { name: "IUCN PANORAMA", url: BRAND_LINKS.Panorama, desc: "PANORAMA, an IUCN-hosted platform, showcases nature-based solutions worldwide, with a growing collection of energy-relevant practices reviewed for conservation relevance and documented outcomes.", color: "border-l-emerald-500" },
+                { name: "OCEaN", url: brandLinks.OCEaN, desc: "The Offshore Coalition for Energy and Nature focuses on enhancement and restoration projects in the offshore wind sector, demonstrating how offshore energy and marine conservation can work together.", color: "border-l-sky-500" },
+                { name: "SafeLines4Birds", url: brandLinks.SL4B, desc: "The LIFE SafeLines4Birds project documents bird protection practices for power line infrastructure across Europe, including bird flight diverters, nesting platforms, and sensitivity mapping.", color: "border-l-orange-500" },
+                { name: "IUCN PANORAMA", url: brandLinks.Panorama, desc: "PANORAMA, an IUCN-hosted platform, showcases nature-based solutions worldwide, with a growing collection of energy-relevant practices reviewed for conservation relevance and documented outcomes.", color: "border-l-emerald-500" },
               ]).map((partner) => (
                 <a
                   key={partner.name}
@@ -2135,13 +2147,13 @@ export default function EnergyTransitionAtlas() {
             {/* Col 1: Logos + tagline */}
             <div className="col-span-2 md:col-span-1">
               <div className="flex flex-nowrap items-center gap-6">
-                <a href={BRAND_LINKS.RGI} target="_blank" rel="noopener noreferrer"><img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[36px] md:h-[52px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
-                <a href={BRAND_LINKS.GINGR} target="_blank" rel="noopener noreferrer"><img src="logos/gingr-white.svg" alt="GINGR (Global Initiative for Nature, Grids and Renewables)" className="h-[36px] md:h-[52px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
-                <a href={BRAND_LINKS.IUCN} target="_blank" rel="noopener noreferrer"><img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[44px] md:h-[68px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
+                <a href={brandLinks.RGI} target="_blank" rel="noopener noreferrer"><img src="logos/rgi-white.svg" alt="Renewables Grid Initiative (RGI)" className="h-[36px] md:h-[52px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
+                <a href={brandLinks.GINGR} target="_blank" rel="noopener noreferrer"><img src="logos/gingr-white.svg" alt="GINGR (Global Initiative for Nature, Grids and Renewables)" className="h-[36px] md:h-[52px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
+                <a href={brandLinks.IUCN} target="_blank" rel="noopener noreferrer"><img src="logos/iucn.png" alt="International Union for Conservation of Nature (IUCN)" className="h-[44px] md:h-[68px] w-auto opacity-80 hover:opacity-100 transition-opacity" /></a>
               </div>
-              <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed max-w-md">
-                The Energy Transition Atlas is a joint project of the Renewables Grid Initiative (RGI), the International Union for Conservation of Nature (IUCN), and their shared initiative GINGR &ndash; the Global Initiative for Nature, Grids and Renewables.
-              </p>
+              <p className="mt-3 text-[#C9C9C9] text-sm leading-relaxed max-w-md" dangerouslySetInnerHTML={{
+                __html: siteCopy?.footerTagline || "The Energy Transition Atlas is a joint project of the Renewables Grid Initiative (RGI), the International Union for Conservation of Nature (IUCN), and their shared initiative GINGR &ndash; the Global Initiative for Nature, Grids and Renewables."
+              }} />
             </div>
             {/* Col 2: Contact */}
             <div>
@@ -2173,14 +2185,14 @@ export default function EnergyTransitionAtlas() {
           {/* Bottom bar */}
           <div className="mt-8 pt-6 border-t border-[#C9C9C9]/30 text-center">
             <p className="text-[#C9C9C9] text-xs">
-              &copy; 2026 RGI, GINGR &amp; IUCN
+              &copy; {new Date().getFullYear()} {siteCopy?.copyrightOrgs || "RGI, GINGR & IUCN"}
             </p>
           </div>
         </div>
       </footer>
 
       {/* ─── Practice Detail Modal ─── */}
-      {selectedPractice && <PracticeDetailModal practice={selectedPractice} onClose={() => setSelectedPractice(null)} themeClasses={themeClasses} />}
+      {selectedPractice && <PracticeDetailModal practice={selectedPractice} onClose={() => setSelectedPractice(null)} themeClasses={themeClasses} brandLinks={brandLinks} atlasPartnerLabels={atlasPartnerLabels} />}
 
       {/* ─── Back to Top Button ─── */}
       {(scrolledPastHero || showBackToTop) && (
