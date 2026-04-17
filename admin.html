@@ -6,12 +6,16 @@
   <title>Energy Transition Atlas — Admin</title>
   <link rel="icon" href="favicon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Albert Sans', sans-serif; }
   </style>
 </head>
 <body class="bg-[#FFF8E5] min-h-screen">
+  <!-- Toast container — floats top-right of the viewport -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 w-full max-w-sm pointer-events-none"></div>
+
   <div id="app" class="max-w-4xl mx-auto px-6 py-12">
     <!-- Auth Screen -->
     <div id="auth-screen">
@@ -20,24 +24,43 @@
         Back to Atlas
       </a>
       <h1 class="font-bold text-[#6B21A8] text-3xl mb-2">Atlas Admin</h1>
-      <p class="text-[#424244] text-sm mb-6">Sign in with a GitHub Personal Access Token that has <code class="bg-white px-1.5 py-0.5 rounded text-xs border border-[#C9C9C9]">repo</code> scope.</p>
-      <div class="bg-white rounded-xl border border-[#C9C9C9] p-6 max-w-md">
-        <label class="block text-sm font-medium text-[#424244] mb-1">GitHub Personal Access Token</label>
-        <input id="pat-input" type="password" placeholder="ghp_..." class="w-full px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm text-[#424244] focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20 mb-3" />
-        <p id="auth-error" class="text-red-600 text-xs mb-3 hidden"></p>
-        <button onclick="authenticate()" class="px-6 py-2.5 rounded-full bg-[#6B21A8] text-white text-sm font-medium hover:bg-[#6B21A8]/90 transition-colors">
-          Sign In
-        </button>
-        <details class="mt-4 text-xs text-[#6B6B6D]">
-          <summary class="cursor-pointer hover:text-[#424244]">How to create a token</summary>
-          <ol class="mt-2 space-y-1 pl-4 list-decimal">
-            <li>Go to GitHub &rarr; Settings &rarr; Developer Settings &rarr; Personal Access Tokens &rarr; Fine-grained tokens</li>
-            <li>Click "Generate new token"</li>
-            <li>Set repository access to <strong>RenewablesGridInitiative/energy-transition-atlas</strong></li>
-            <li>Under "Repository permissions", grant <strong>Contents: Read and write</strong></li>
-            <li>Generate and copy the token</li>
+      <p class="text-[#424244] text-sm mb-6 max-w-xl">Sign in with a GitHub access token to update practices and site content.</p>
+
+      <div class="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 max-w-4xl">
+        <!-- Sign-in form -->
+        <div class="bg-white rounded-xl border border-[#C9C9C9] p-6 h-fit">
+          <h2 class="font-semibold text-[#424244] text-base mb-1">Sign in</h2>
+          <p class="text-xs text-[#6B6B6D] mb-4">Paste your token below. It's kept only in this browser tab and forgotten when you close it.</p>
+          <label class="block text-sm font-medium text-[#424244] mb-1" for="pat-input">GitHub access token</label>
+          <input id="pat-input" type="password" autocomplete="off" placeholder="github_pat_… or ghp_…" class="w-full px-4 py-2.5 rounded-lg border border-[#C9C9C9] bg-white text-sm text-[#424244] focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20 mb-3" />
+          <p id="auth-error" class="text-red-600 text-xs mb-3 hidden"></p>
+          <p id="token-test-result" class="text-xs mb-3 hidden"></p>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="authenticate()" class="px-6 py-2.5 rounded-full bg-[#6B21A8] text-white text-sm font-medium hover:bg-[#6B21A8]/90 transition-colors">
+              Sign In
+            </button>
+            <button onclick="testToken()" class="px-6 py-2.5 rounded-full border border-[#C9C9C9] text-[#424244] text-sm hover:bg-[#FFF8E5] transition-colors">
+              Test my token
+            </button>
+          </div>
+        </div>
+
+        <!-- Getting a token -->
+        <div class="bg-white rounded-xl border border-[#C9C9C9] p-6">
+          <h2 class="font-semibold text-[#424244] text-base mb-2">Don't have a token yet?</h2>
+          <p class="text-xs text-[#6B6B6D] mb-3">A token is like a one-time password for this computer. It lets the Atlas save your edits back to GitHub.</p>
+          <ol class="text-xs text-[#424244] space-y-2 pl-4 list-decimal">
+            <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer" class="text-[#6B21A8] underline font-medium">github.com/settings/personal-access-tokens/new</a> in a new tab (sign in to GitHub if asked).</li>
+            <li><strong>Token name</strong>: something you'll recognise, e.g. "Atlas Admin — my laptop".</li>
+            <li><strong>Expiration</strong>: 90 days is a good default. You'll need to repeat these steps to renew it.</li>
+            <li><strong>Repository access</strong>: choose <em>Only select repositories</em> and pick <code class="bg-[#FFF8E5] px-1 rounded">RenewablesGridInitiative/energy-transition-atlas</code>.</li>
+            <li>Scroll to <strong>Permissions &rarr; Repository permissions</strong> and set <strong>Contents</strong> to <em>Read and write</em>.</li>
+            <li>Scroll to the bottom, click <strong>Generate token</strong>, then copy the token (starts with <code>github_pat_</code>).</li>
+            <li>Paste it into the field on the left and click <strong>Sign In</strong>.</li>
           </ol>
-        </details>
+          <p class="text-xs text-[#6B6B6D] mt-3"><strong>Lost your token?</strong> GitHub can't show it again — you'll need to generate a new one. That's fine, just repeat these steps.</p>
+          <p class="text-xs text-[#6B6B6D] mt-2">If none of this looks familiar, ask whoever set up the Atlas for help — don't guess.</p>
+        </div>
       </div>
     </div>
 
@@ -108,9 +131,19 @@
           </div>
           <input type="file" id="csv-file" accept=".csv" class="hidden" onchange="handleFileSelect(event)" />
 
+          <div id="csv-errors" class="hidden mb-4">
+            <h3 class="font-medium text-red-700 text-sm mb-2">We found some problems in your CSV</h3>
+            <p class="text-[#6B6B6D] text-xs mb-2">Fix these and re-upload. Row numbers count the header as row 1, so your first data row is row 2.</p>
+            <ul id="csv-error-list" class="bg-red-50 border border-red-200 rounded-lg p-4 text-xs text-red-800 space-y-1 max-h-48 overflow-y-auto"></ul>
+          </div>
+
           <div id="csv-preview" class="hidden mb-4">
-            <h3 class="font-medium text-[#424244] text-sm mb-2">Preview</h3>
-            <div id="csv-preview-content" class="bg-[#FFF8E5] rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-48 overflow-y-auto"></div>
+            <h3 class="font-medium text-emerald-700 text-sm mb-2">Looks good</h3>
+            <div id="csv-diff-summary" class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-xs text-[#424244] mb-3"></div>
+            <details>
+              <summary class="cursor-pointer text-xs text-[#6B6B6D] hover:text-[#424244]">Show first 6 rows</summary>
+              <div id="csv-preview-content" class="mt-2 bg-[#FFF8E5] rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-48 overflow-y-auto"></div>
+            </details>
             <p id="csv-row-count" class="text-[#6B6B6D] text-xs mt-2"></p>
           </div>
 
@@ -316,31 +349,179 @@
 
     let token = null;
     let csvContent = null;
+    let csvParsedRows = null;   // parsed rows of the file being uploaded
+    let csvServerRows = null;   // parsed rows of the CSV currently on the repo (for diff)
     let configData = null;
     let configSha = null;
 
+    // ── CSV validation spec (mirrors VALIDATION.md and validate_csv.py) ──
+    const CSV_HEADERS = ["id","title","url","brand","theme","topic","inf","year","country","org","desc","img","award"];
+    const CSV_ALLOWED_BRANDS = ["RGI","OCEaN","Panorama","SL4B"];
+    const CSV_REQUIRED_NON_EMPTY = ["title","url","brand","inf"];
+    const CSV_URL_REGEX = /^https?:\/\/\S+$/;
+
+    function validatePractices(rows, headers) {
+      const errors = [];
+      const push = (row, column, message) => { if (errors.length < 20) errors.push({ row, column, message }); };
+
+      // Header check
+      const headerOk = Array.isArray(headers) && headers.length === CSV_HEADERS.length &&
+        CSV_HEADERS.every((h, i) => headers[i] === h);
+      if (!headerOk) {
+        push(1, "header", `First row must be exactly: ${CSV_HEADERS.join(",")}`);
+        return errors;
+      }
+
+      const idRows = new Map();
+      const maxYear = new Date().getFullYear() + 1;
+
+      rows.forEach((row, idx) => {
+        const rowNum = idx + 2; // header is row 1
+
+        const idVal = (row.id ?? "").toString().trim();
+        if (!idVal) {
+          push(rowNum, "id", "must be set");
+        } else if (!/^\d+$/.test(idVal) || parseInt(idVal, 10) <= 0) {
+          push(rowNum, "id", "must be a positive integer");
+        } else {
+          const id = parseInt(idVal, 10);
+          if (!idRows.has(id)) idRows.set(id, []);
+          idRows.get(id).push(rowNum);
+        }
+
+        for (const f of CSV_REQUIRED_NON_EMPTY) {
+          if (!((row[f] ?? "").toString().trim())) push(rowNum, f, "must not be empty");
+        }
+
+        const url = (row.url ?? "").toString().trim();
+        if (url && !CSV_URL_REGEX.test(url)) push(rowNum, "url", "must start with http:// or https:// and contain no spaces");
+
+        const img = (row.img ?? "").toString().trim();
+        if (img && !CSV_URL_REGEX.test(img)) push(rowNum, "img", "must be empty or start with http:// or https://");
+
+        const brand = (row.brand ?? "").toString().trim();
+        if (brand && !CSV_ALLOWED_BRANDS.includes(brand)) push(rowNum, "brand", `must be one of ${CSV_ALLOWED_BRANDS.join(", ")}`);
+
+        const year = (row.year ?? "").toString().trim();
+        if (year) {
+          if (!/^\d+$/.test(year) || parseInt(year, 10) < 1900 || parseInt(year, 10) > maxYear) {
+            push(rowNum, "year", `must be blank or an integer between 1900 and ${maxYear}`);
+          }
+        }
+
+        const award = (row.award ?? "").toString().trim().toLowerCase();
+        if (award !== "true" && award !== "false") push(rowNum, "award", 'must be "true" or "false"');
+      });
+
+      // Duplicate ids
+      for (const [id, rowList] of idRows.entries()) {
+        if (rowList.length > 1) {
+          rowList.forEach((r) => {
+            const others = rowList.filter((x) => x !== r);
+            push(r, "id", `duplicate id ${id} (also on row${others.length > 1 ? "s" : ""} ${others.join(", ")})`);
+          });
+        }
+      }
+
+      return errors;
+    }
+
     // ── Auth ──
+    // Translate a GitHub API response into actionable human language.
+    // Pass the response *and* the parsed JSON body (null if unavailable).
+    async function translateGhError(res, fallbackMsg) {
+      let body = null;
+      try { body = await res.clone().json(); } catch (e) { /* not JSON */ }
+      const ghMsg = body?.message || "";
+      switch (res.status) {
+        case 401:
+          return "Your token was not accepted by GitHub. It may have expired, been revoked, or contain a typo. Generate a new token and try again.";
+        case 403:
+          if (ghMsg.toLowerCase().includes("rate limit")) {
+            return "GitHub is temporarily rate-limiting your account. Wait a minute and try again.";
+          }
+          return "Your token exists but doesn't have permission for this action. You need \"Contents: Read and write\" on this repository. Generate a new token with the right permission.";
+        case 404:
+          return "GitHub can't see the target file — either your token doesn't have access to this repository, or the file has been moved. Double-check the token's repository access.";
+        case 409:
+          return "The file was changed on GitHub since you loaded this page. Click \"View Site\" then reload the admin to pick up the latest version before saving again.";
+        case 422:
+          return `GitHub rejected this request: ${ghMsg || "validation failed"}. Check the input and try again.`;
+        default:
+          return ghMsg ? `${fallbackMsg || "Something went wrong"}: ${ghMsg}` : (fallbackMsg || `Unexpected response from GitHub (HTTP ${res.status}).`);
+      }
+    }
+
+    // Test-only: does this token have the right access? Does not sign in.
+    async function testToken() {
+      const pat = document.getElementById("pat-input").value.trim();
+      const resEl = document.getElementById("token-test-result");
+      hideMsg("auth-error");
+      resEl.classList.remove("hidden");
+      if (!pat) {
+        resEl.textContent = "Paste a token first.";
+        resEl.className = "text-xs mb-3 text-red-600";
+        return;
+      }
+      resEl.textContent = "Checking…";
+      resEl.className = "text-xs mb-3 text-[#6B6B6D]";
+      try {
+        const userRes = await ghFetch("/user", pat);
+        if (!userRes.ok) throw { res: userRes, step: "token" };
+        const user = await userRes.json();
+        const repoRes = await ghFetch(`/repos/${OWNER}/${REPO}`, pat);
+        if (!repoRes.ok) throw { res: repoRes, step: "repo" };
+        const repo = await repoRes.json();
+        if (!repo.permissions?.push) {
+          resEl.textContent = `Your token recognises you as ${user.login} and can read the repository, but can't write. Regenerate the token with "Contents: Read and write".`;
+          resEl.className = "text-xs mb-3 text-red-600";
+          return;
+        }
+        resEl.textContent = `✓ Your token works. Recognised as ${user.login} with write access to ${OWNER}/${REPO}.`;
+        resEl.className = "text-xs mb-3 text-emerald-700";
+      } catch (obj) {
+        if (obj?.res) {
+          const msg = await translateGhError(obj.res, "Token test failed");
+          resEl.textContent = msg;
+        } else {
+          resEl.textContent = `Token test failed: ${obj?.message || obj}`;
+        }
+        resEl.className = "text-xs mb-3 text-red-600";
+      }
+    }
+
     async function authenticate() {
       const pat = document.getElementById("pat-input").value.trim();
-      if (!pat) return showError("auth-error", "Please enter a token.");
+      hideMsg("token-test-result");
+      if (!pat) return showError("auth-error", "Please paste a token above.");
 
       try {
         const userRes = await ghFetch("/user", pat);
-        if (!userRes.ok) throw new Error("Invalid token");
+        if (!userRes.ok) {
+          showError("auth-error", await translateGhError(userRes, "Sign-in failed"));
+          return;
+        }
         const user = await userRes.json();
 
         const repoRes = await ghFetch(`/repos/${OWNER}/${REPO}`, pat);
-        if (!repoRes.ok) throw new Error("No access to repository");
+        if (!repoRes.ok) {
+          showError("auth-error", await translateGhError(repoRes, "Could not load repository"));
+          return;
+        }
         const repo = await repoRes.json();
-        if (!repo.permissions?.push) throw new Error("Token does not have write access to this repository");
+        if (!repo.permissions?.push) {
+          showError("auth-error", `Signed in as ${user.login}, but this token can only read the repository. Regenerate the token with "Contents: Read and write".`);
+          return;
+        }
 
         token = pat;
         sessionStorage.setItem("_eta_session", pat);
         document.getElementById("user-info").textContent = `Signed in as ${user.login}`;
         document.getElementById("auth-screen").classList.add("hidden");
         document.getElementById("admin-dashboard").classList.remove("hidden");
+        fetchServerCSVForDiff(); // fire-and-forget; populates csvServerRows for later diffing
       } catch (e) {
-        showError("auth-error", e.message);
+        showError("auth-error", `Couldn't reach GitHub: ${e.message}. Check your connection and try again.`);
       }
     }
 
@@ -744,13 +925,14 @@
       }
 
       // Save to GitHub
+      const sectionLabels = { about: "About page", contact: "Contact page", submit: "Submit page", partners: "Partners", brandbar: "Brand bar" };
+      const label = sectionLabels[section] || section;
       try {
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(configData, null, 2) + "\n")));
-        const sectionLabels = { about: "About page", contact: "Contact page", submit: "Submit page", partners: "Partners", brandbar: "Brand bar" };
         const res = await ghFetch(`/repos/${OWNER}/${REPO}/contents/admin-config.json`, token, {
           method: "PUT",
           body: JSON.stringify({
-            message: `Update ${sectionLabels[section] || section} content via Atlas Admin`,
+            message: `Update ${label} content via Atlas Admin`,
             content,
             sha: configSha,
             branch: "main",
@@ -758,15 +940,19 @@
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.message || "Save failed");
+          const msg = await translateGhError(res, "Save failed");
+          showError(`${section}-error`, msg);
+          toastError(`${label} not saved`, msg);
+          return;
         }
 
         const result = await res.json();
         configSha = result.content.sha;
-        showSuccess(`${section}-success`, "Saved! Changes will appear on the live site shortly.");
+        toastSaved(label);
       } catch (e) {
-        showError(`${section}-error`, e.message);
+        const msg = `Couldn't reach GitHub: ${e.message}. Check your connection and try again.`;
+        showError(`${section}-error`, msg);
+        toastError(`${label} not saved`, msg);
       }
     }
 
@@ -784,19 +970,102 @@
     }
 
     function processCSVFile(file) {
-      if (!file.name.endsWith(".csv")) { showError("csv-error", "Please select a CSV file."); return; }
+      if (!file.name.toLowerCase().endsWith(".csv")) { showError("csv-error", "Please select a file ending in .csv."); return; }
       const reader = new FileReader();
       reader.onload = (e) => {
-        csvContent = e.target.result;
-        const lines = csvContent.trim().split("\n");
-        if (lines[0].split(",").length < 13) { showError("csv-error", `Expected at least 13 columns, found ${lines[0].split(",").length}.`); csvContent = null; return; }
-        hideMsg("csv-error"); hideMsg("csv-success");
+        let raw = e.target.result;
+        // Strip UTF-8 BOM if present
+        if (raw.charCodeAt(0) === 0xFEFF) raw = raw.slice(1);
+        csvContent = raw;
+
+        const parsed = Papa.parse(raw, { header: true, skipEmptyLines: true });
+        const headers = parsed.meta?.fields || [];
+        const rows = parsed.data || [];
+        const parseErrors = (parsed.errors || []).filter((e) => e.code !== "TooFewFields" || e.row !== rows.length); // PapaParse sometimes flags the final blank line
+        const validationErrors = validatePractices(rows, headers);
+
+        // Collect parse-level errors too (malformed quoting, etc.)
+        const allErrors = [
+          ...parseErrors.map((e) => ({ row: (typeof e.row === "number" ? e.row + 2 : 1), column: "(parse)", message: e.message })),
+          ...validationErrors,
+        ].slice(0, 20);
+
+        hideMsg("csv-error");
+        hideMsg("csv-success");
+
+        if (allErrors.length > 0) {
+          csvParsedRows = null;
+          document.getElementById("csv-preview").classList.add("hidden");
+          document.getElementById("csv-errors").classList.remove("hidden");
+          const ul = document.getElementById("csv-error-list");
+          ul.innerHTML = "";
+          allErrors.forEach((err) => {
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>Row ${err.row}</strong> &middot; <code>${escHtml(err.column)}</code>: ${escHtml(err.message)}`;
+            ul.appendChild(li);
+          });
+          if (validationErrors.length === 20 || parseErrors.length + validationErrors.length > 20) {
+            const li = document.createElement("li");
+            li.className = "italic";
+            li.textContent = "… more issues hidden. Fix these and re-upload to see the rest.";
+            ul.appendChild(li);
+          }
+          document.getElementById("csv-upload-btn").disabled = true;
+          return;
+        }
+
+        // Success — store parsed rows and show diff summary
+        csvParsedRows = rows;
+        document.getElementById("csv-errors").classList.add("hidden");
         document.getElementById("csv-preview").classList.remove("hidden");
+        document.getElementById("csv-diff-summary").innerHTML = buildCSVDiffSummary(rows, csvServerRows);
+        const lines = raw.trim().split("\n");
         document.getElementById("csv-preview-content").textContent = lines.slice(0, 6).join("\n") + (lines.length > 6 ? "\n..." : "");
-        document.getElementById("csv-row-count").textContent = `${lines.length - 1} practices found (${file.name}, ${(file.size / 1024).toFixed(1)} KB)`;
+        document.getElementById("csv-row-count").textContent = `${rows.length} practices parsed (${file.name}, ${(file.size / 1024).toFixed(1)} KB)`;
         document.getElementById("csv-upload-btn").disabled = false;
       };
       reader.readAsText(file);
+    }
+
+    // Build a human-readable diff summary of the uploaded CSV against the current server CSV.
+    function buildCSVDiffSummary(newRows, serverRows) {
+      const total = newRows.length;
+      if (!serverRows) {
+        return `<strong>${total}</strong> practice${total === 1 ? "" : "s"} in the uploaded CSV. (Could not compare to the current CSV on GitHub — see console.)`;
+      }
+      const newById = new Map(newRows.map((r) => [String(r.id).trim(), r]));
+      const oldById = new Map(serverRows.map((r) => [String(r.id).trim(), r]));
+      let added = 0, removed = 0, changed = 0, unchanged = 0;
+      for (const [id, nr] of newById.entries()) {
+        if (!oldById.has(id)) { added++; continue; }
+        const or = oldById.get(id);
+        const diff = CSV_HEADERS.some((col) => (nr[col] ?? "") !== (or[col] ?? ""));
+        if (diff) changed++; else unchanged++;
+      }
+      for (const id of oldById.keys()) if (!newById.has(id)) removed++;
+      const parts = [
+        `<strong>${total}</strong> practice${total === 1 ? "" : "s"} total`,
+        `${unchanged} unchanged`,
+        `${changed} edited`,
+        `${added} new`,
+        `${removed} removed`,
+      ];
+      return parts.join(" &middot; ");
+    }
+
+    // Fetch the current CSV on load so we can diff against it when the admin uploads.
+    async function fetchServerCSVForDiff() {
+      try {
+        const res = await ghFetch(`/repos/${OWNER}/${REPO}/contents/practices_master.csv`, token);
+        if (!res.ok) return;
+        const data = await res.json();
+        const b64 = data.content.replace(/\n/g, "");
+        const text = decodeURIComponent(escape(atob(b64)));
+        const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+        csvServerRows = parsed.data || [];
+      } catch (e) {
+        console.warn("Could not pre-fetch server CSV for diff:", e);
+      }
     }
 
     async function uploadCSV() {
@@ -810,11 +1079,30 @@
         const body = { message: "Update practices_master.csv via Atlas Admin", content: btoa(unescape(encodeURIComponent(csvContent))), branch: "main" };
         if (fileData?.sha) body.sha = fileData.sha;
         const putRes = await ghFetch(`/repos/${OWNER}/${REPO}/contents/practices_master.csv`, token, { method: "PUT", body: JSON.stringify(body) });
-        if (!putRes.ok) { const err = await putRes.json(); throw new Error(err.message || "Upload failed"); }
-        showSuccess("csv-success", "CSV uploaded successfully! The GitHub Action will regenerate the site data shortly.");
+        if (!putRes.ok) {
+          const msg = await translateGhError(putRes, "CSV upload failed");
+          showError("csv-error", msg);
+          toastError("CSV not uploaded", msg);
+          btn.disabled = false;
+          btn.textContent = "Upload to Repository";
+          return;
+        }
+        toast("CSV uploaded. GitHub is validating and rebuilding the site — give it 1–2 minutes.", {
+          level: "success",
+          linkUrl: ACTIONS_URL,
+          linkLabel: "Watch the build progress",
+        });
         document.getElementById("csv-preview").classList.add("hidden");
         csvContent = null;
-      } catch (e) { showError("csv-error", e.message); btn.disabled = false; }
+        csvParsedRows = null;
+        // Refresh server snapshot so the next diff is against the new baseline
+        fetchServerCSVForDiff();
+      } catch (e) {
+        const msg = `Couldn't reach GitHub: ${e.message}. Check your connection and try again.`;
+        showError("csv-error", msg);
+        toastError("CSV not uploaded", msg);
+        btn.disabled = false;
+      }
       btn.textContent = "Upload to Repository";
     }
 
@@ -930,8 +1218,7 @@
           body: JSON.stringify(logoBody),
         });
         if (!logoPutRes.ok) {
-          const err = await logoPutRes.json();
-          throw new Error(err.message || "Logo upload failed");
+          throw new Error(await translateGhError(logoPutRes, "Logo upload failed"));
         }
 
         // Ensure brandBar exists
@@ -961,8 +1248,7 @@
           }),
         });
         if (!configRes.ok) {
-          const err = await configRes.json();
-          throw new Error(err.message || "Config update failed");
+          throw new Error(await translateGhError(configRes, "Saving the logo path failed"));
         }
         const result = await configRes.json();
         configSha = result.content.sha;
@@ -971,14 +1257,16 @@
         logoInput.value = targetPath;
         renderBrandBarOwners("bb-owners-fields", configData.brandBar.owners);
 
-        // Find the re-rendered row and display success
+        // Find the re-rendered row and display inline confirmation + toast
         const refreshed = document.querySelector(`#bb-owners-fields > [data-slot-idx="${slotIdx}"] .bb-logo-status`);
         if (refreshed) {
-          refreshed.textContent = `Uploaded as ${targetPath}. Changes may take up to 2 minutes to appear on the live site.`;
+          refreshed.textContent = `Uploaded as ${targetPath}.`;
           refreshed.className = "bb-logo-status text-xs text-emerald-600";
         }
+        toastSaved(`${name} logo`);
       } catch (e) {
         setStatus("Error: " + e.message, "text-red-600");
+        toastError("Logo upload failed", e.message);
       } finally {
         event.target.value = "";
       }
@@ -1025,6 +1313,52 @@
     function showSuccess(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.remove("hidden"); }
     function hideMsg(id) { const el = document.getElementById(id); if (el) el.classList.add("hidden"); }
     function escHtml(str) { return (str || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+    // ── Toast ──
+    const TOAST_STYLES = {
+      success: "bg-emerald-50 border-emerald-400 text-emerald-900",
+      error:   "bg-red-50 border-red-400 text-red-900",
+      info:    "bg-[#FFF8E5] border-[#6B21A8]/40 text-[#424244]",
+    };
+    const TOAST_ICONS = {
+      success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      error:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      info:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>',
+    };
+    const ACTIONS_URL = `https://github.com/${OWNER}/${REPO}/actions`;
+
+    // toast(msg, { level, linkUrl, linkLabel, stayOpen })
+    function toast(msg, opts = {}) {
+      const level = opts.level || "success";
+      const container = document.getElementById("toast-container");
+      const el = document.createElement("div");
+      el.className = `pointer-events-auto rounded-xl border-l-4 border p-4 shadow-lg flex gap-3 items-start animate-fade-in ${TOAST_STYLES[level]}`;
+      const linkHtml = opts.linkUrl
+        ? `<a href="${escHtml(opts.linkUrl)}" target="_blank" rel="noopener noreferrer" class="underline font-medium hover:opacity-80">${escHtml(opts.linkLabel || "View")}</a>`
+        : "";
+      el.innerHTML = `
+        <div class="shrink-0 mt-0.5">${TOAST_ICONS[level] || ""}</div>
+        <div class="flex-1 text-sm leading-snug">
+          <p>${escHtml(msg)}</p>
+          ${linkHtml ? `<p class="mt-1 text-xs">${linkHtml}</p>` : ""}
+        </div>
+        <button aria-label="Dismiss" class="shrink-0 text-xs opacity-60 hover:opacity-100" onclick="this.closest('div.pointer-events-auto').remove()">✕</button>`;
+      container.appendChild(el);
+      const timeout = opts.stayOpen ? 0 : (level === "error" ? 12000 : 8000);
+      if (timeout) setTimeout(() => el.remove(), timeout);
+    }
+
+    // Shorthand — fired after a successful save that kicks a GitHub Action.
+    function toastSaved(label) {
+      toast(`${label} saved. GitHub is building the updated site — give it 1–2 minutes to appear.`, {
+        level: "success",
+        linkUrl: ACTIONS_URL,
+        linkLabel: "Watch the build progress",
+      });
+    }
+    function toastError(label, message) {
+      toast(`${label}: ${message}`, { level: "error", stayOpen: true });
+    }
   </script>
 </body>
 </html>
