@@ -11,18 +11,36 @@ VALIDATION.md is the shared spec.
 
 import csv
 import datetime
+import json
 import os
 import re
 import sys
 
-CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "practices_master.csv")
+DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(DIR, "practices_master.csv")
+CONFIG_PATH = os.path.join(DIR, "admin-config.json")
 
 HEADERS = ["id", "title", "url", "brand", "theme", "topic", "inf", "year",
            "country", "org", "desc", "img", "award"]
-ALLOWED_BRANDS = {"RGI", "OCEaN", "Panorama", "SL4B"}
+DEFAULT_BRANDS = {"RGI", "OCEaN", "Panorama", "SL4B"}
 REQUIRED_NON_EMPTY = ("title", "url", "brand", "inf")
 URL_RE = re.compile(r"^https?://\S+$")
 MAX_REPORTED = 20
+
+
+def allowed_brands():
+    """Brand allow-list: union of admin-config.json's atlasPartnerLabels keys
+    (when present) and the default four. Keeps the Python validator in sync
+    with what the admin UI considers valid."""
+    try:
+        with open(CONFIG_PATH, encoding="utf-8-sig") as f:
+            cfg = json.load(f)
+        labels = cfg.get("atlasPartnerLabels") or {}
+        if labels:
+            return set(labels.keys()) | DEFAULT_BRANDS
+    except (OSError, json.JSONDecodeError):
+        pass
+    return set(DEFAULT_BRANDS)
 
 
 def validate(path):
@@ -44,6 +62,7 @@ def validate(path):
 
         id_rows = {}
         max_year = datetime.datetime.now().year + 1
+        brands_ok = allowed_brands()
 
         for idx, row in enumerate(reader):
             row_num = idx + 2  # header is row 1
@@ -73,8 +92,8 @@ def validate(path):
                 push(row_num, "img", "must be empty or start with http:// or https://")
 
             brand = r["brand"].strip()
-            if brand and brand not in ALLOWED_BRANDS:
-                push(row_num, "brand", f"must be one of {', '.join(sorted(ALLOWED_BRANDS))}")
+            if brand and brand not in brands_ok:
+                push(row_num, "brand", f"must be one of {', '.join(sorted(brands_ok))}")
 
             year = r["year"].strip()
             if year:

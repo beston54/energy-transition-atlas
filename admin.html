@@ -147,10 +147,6 @@
               <input id="practices-search" type="search" placeholder="Search by id, title, org, or country…" class="flex-1 min-w-[240px] px-4 py-2 rounded-lg border border-[#C9C9C9] text-sm focus:outline-none focus:border-[#6B21A8] focus:ring-2 focus:ring-[#6B21A8]/20" oninput="renderPracticesTable()" />
               <select id="practices-brand-filter" class="px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" onchange="renderPracticesTable()">
                 <option value="">All partners</option>
-                <option value="RGI">RGI</option>
-                <option value="OCEaN">OCEaN</option>
-                <option value="Panorama">Panorama</option>
-                <option value="SL4B">SL4B</option>
               </select>
               <button type="button" onclick="openNewPracticeModal()" class="px-4 py-2 rounded-full bg-[#6B21A8] text-white text-sm font-medium hover:bg-[#6B21A8]/90 transition-colors inline-flex items-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -199,12 +195,8 @@
                 </label>
                 <label class="block">
                   <span class="block text-xs font-medium text-[#424244] mb-1">Partner <span class="text-red-600">*</span></span>
-                  <select id="pm-brand" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required>
-                    <option value="RGI">RGI</option>
-                    <option value="OCEaN">OCEaN</option>
-                    <option value="Panorama">Panorama</option>
-                    <option value="SL4B">SL4B</option>
-                  </select>
+                  <select id="pm-brand" class="w-full px-3 py-2 rounded-lg border border-[#C9C9C9] text-sm" required></select>
+                  <p class="text-[10px] text-[#6B6B6D] mt-1">To add a new partner to this list, open <strong>Site &amp; Nav</strong> → <em>Advanced: partner URLs &amp; display labels</em>.</p>
                 </label>
               </div>
               <label class="block">
@@ -619,9 +611,19 @@
 
     // ── CSV validation spec (mirrors VALIDATION.md and validate_csv.py) ──
     const CSV_HEADERS = ["id","title","url","brand","theme","topic","inf","year","country","org","desc","img","award"];
-    const CSV_ALLOWED_BRANDS = ["RGI","OCEaN","Panorama","SL4B"];
+    const CSV_DEFAULT_BRANDS = ["RGI","OCEaN","Panorama","SL4B"];
     const CSV_REQUIRED_NON_EMPTY = ["title","url","brand","inf"];
     const CSV_URL_REGEX = /^https?:\/\/\S+$/;
+
+    // Allowed brand codes come from admin-config.json's atlasPartnerLabels keys
+    // when set (so adding a partner there flows through to validation + the
+    // practice dropdown), falling back to the default four when config is
+    // missing or empty.
+    function getAllowedBrands() {
+      const labels = configData?.atlasPartnerLabels;
+      if (labels && Object.keys(labels).length > 0) return Object.keys(labels);
+      return CSV_DEFAULT_BRANDS.slice();
+    }
 
     function validatePractices(rows, headers) {
       const errors = [];
@@ -663,7 +665,8 @@
         if (img && !CSV_URL_REGEX.test(img)) push(rowNum, "img", "must be empty or start with http:// or https://");
 
         const brand = (row.brand ?? "").toString().trim();
-        if (brand && !CSV_ALLOWED_BRANDS.includes(brand)) push(rowNum, "brand", `must be one of ${CSV_ALLOWED_BRANDS.join(", ")}`);
+        const allowed = getAllowedBrands();
+        if (brand && !allowed.includes(brand)) push(rowNum, "brand", `must be one of ${allowed.join(", ")}`);
 
         const year = (row.year ?? "").toString().trim();
         if (year) {
@@ -1745,6 +1748,10 @@
       contentEl.classList.add("hidden");
       loadingEl.classList.remove("hidden");
       loadingEl.textContent = forceRefresh ? "Refreshing…" : "Loading practices…";
+      // Ensure config is loaded so the partner dropdown reflects the latest labels
+      if (!configData) {
+        try { await loadConfig(); } catch (e) { /* fall through; defaults will be used */ }
+      }
       try {
         const res = await ghFetch(`/repos/${OWNER}/${REPO}/contents/practices_master.csv`, token);
         if (!res.ok) throw new Error(await translateGhError(res, "Could not load practices"));
@@ -1756,10 +1763,39 @@
         csvServerRows = practicesState.rows; // keep CSV-diff path in sync
         loadingEl.classList.add("hidden");
         contentEl.classList.remove("hidden");
+        populateBrandFilter();
         renderPracticesTable();
       } catch (e) {
         loadingEl.textContent = e.message;
       }
+    }
+
+    function populateBrandFilter() {
+      const sel = document.getElementById("practices-brand-filter");
+      if (!sel) return;
+      const current = sel.value;
+      sel.innerHTML = '<option value="">All partners</option>';
+      getAllowedBrands().forEach((b) => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        sel.appendChild(opt);
+      });
+      sel.value = current;
+    }
+
+    function populateBrandDropdown(selected) {
+      const sel = document.getElementById("pm-brand");
+      if (!sel) return;
+      sel.innerHTML = "";
+      const labels = configData?.atlasPartnerLabels || {};
+      getAllowedBrands().forEach((b) => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = labels[b] ? `${b} — ${labels[b]}` : b;
+        sel.appendChild(opt);
+      });
+      if (selected) sel.value = selected;
     }
 
     function renderPracticesTable() {
@@ -1807,7 +1843,7 @@
       document.getElementById("pm-id").value = row.id || "";
       document.getElementById("pm-title").value = row.title || "";
       document.getElementById("pm-url").value = row.url || "";
-      document.getElementById("pm-brand").value = row.brand || "RGI";
+      populateBrandDropdown(row.brand || "RGI");
       document.getElementById("pm-theme").value = row.theme || "";
       document.getElementById("pm-topic").value = row.topic || "";
       document.getElementById("pm-inf").value = row.inf || "";
@@ -1845,7 +1881,7 @@
       document.getElementById("pm-id").value = newId;
       document.getElementById("pm-title").value = "";
       document.getElementById("pm-url").value = "";
-      document.getElementById("pm-brand").value = "RGI";
+      populateBrandDropdown(getAllowedBrands()[0] || "RGI");
       document.getElementById("pm-theme").value = "";
       document.getElementById("pm-topic").value = "";
       document.getElementById("pm-inf").value = "";

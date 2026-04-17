@@ -23,7 +23,7 @@ This file is the **single source of truth** for CSV validation. Both the browser
 | 1 | `id` | yes | integer | Positive integer. Unique across all rows. |
 | 2 | `title` | yes | string | Non-empty after trim. |
 | 3 | `url` | yes | string | Starts with `http://` or `https://`. No whitespace. |
-| 4 | `brand` | yes | string | One of: `RGI`, `OCEaN`, `Panorama`, `SL4B`. |
+| 4 | `brand` | yes | string | One of the keys in `admin-config.json`'s `atlasPartnerLabels` map. Defaults to `RGI`, `OCEaN`, `Panorama`, `SL4B` when no config is set. Both validators pick up additions automatically. |
 | 5 | `theme` | no | string | May be empty. May be comma-separated composite (e.g. `"People, Planning"`). |
 | 6 | `topic` | no | string | May be empty. May be comma-separated composite. |
 | 7 | `inf` | yes | string | Non-empty after trim. |
