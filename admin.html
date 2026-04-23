@@ -187,7 +187,7 @@
                     <th class="text-left px-3 py-2 w-28">Country</th>
                     <th class="text-left px-3 py-2 w-16">Year</th>
                     <th class="text-left px-3 py-2 w-8" title="Award"></th>
-                    <th class="text-right px-3 py-2 w-16"></th>
+                    <th class="text-right px-3 py-2 w-20"></th>
                   </tr>
                 </thead>
                 <tbody id="practices-tbody"></tbody>
@@ -2032,7 +2032,7 @@
           <td class="px-3 py-2 text-[#6B6B6D] truncate max-w-[180px]" title="${escHtml(row.country)}">${escHtml(row.country)}</td>
           <td class="px-3 py-2 text-[#6B6B6D]">${escHtml(row.year)}</td>
           <td class="px-3 py-2 text-center text-amber-500" title="${row.award?.toLowerCase() === "true" ? "Award winner" : ""}">${row.award?.toLowerCase() === "true" ? "★" : ""}</td>
-          <td class="px-3 py-2 text-right"><button type="button" class="text-[#6B21A8] text-xs font-medium hover:underline" onclick='openPracticeModal(${JSON.stringify(row.id)})'>Edit</button></td>`;
+          <td class="px-3 py-2 text-right whitespace-nowrap"><button type="button" class="text-[#6B21A8] text-xs font-medium hover:underline" onclick='openPracticeModal(${JSON.stringify(row.id)})'>Edit</button></td>`;
         tbody.appendChild(tr);
       });
       document.getElementById("practices-count").textContent =
