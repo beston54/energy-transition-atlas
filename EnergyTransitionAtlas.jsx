@@ -1277,8 +1277,10 @@ export default function EnergyTransitionAtlas() {
         return;
       }
     } catch (e) { console.warn("configOverride parse failed", e); }
-    // cache: 'no-cache' — revalidate with server so admin edits appear immediately
-    fetch("admin-config.json", { cache: "no-cache" })
+    // cache: 'no-store' + cache-bust — bypass HTTP cache entirely so admin
+    // edits appear on the next page load even if a CDN/intermediary is
+    // serving a stale 304.
+    fetch("admin-config.json?_=" + Date.now(), { cache: "no-store" })
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

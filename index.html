@@ -66,8 +66,13 @@
     const { useState, useMemo, useRef, useEffect, useCallback } = React;
 
     // ── Fetch the JSX source, patch it, and run it ──
-    // cache: 'no-cache' — revalidate via If-Modified-Since so admin redeploys appear immediately
-    fetch("EnergyTransitionAtlas.jsx", { cache: "no-cache" })
+    // cache: 'no-store' — bypass HTTP cache entirely. 'no-cache' only forces
+    // revalidation, and browsers can still serve a stale body when the CDN
+    // returns 304. With JSX served unhashed from GH Pages, the safer choice
+    // is to refetch every page load so admin/dev redeploys appear immediately.
+    // Cache-busting query string defends against intermediaries that ignore
+    // the Cache-Control hint.
+    fetch("EnergyTransitionAtlas.jsx?_=" + Date.now(), { cache: "no-store" })
       .then(r => {
         if (!r.ok) throw new Error("Failed to load JSX: " + r.status);
         return r.text();
